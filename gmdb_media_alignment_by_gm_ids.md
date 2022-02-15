@@ -29,10 +29,8 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?medium_id ?medium_name ?gmo_id
-FROM <http://localhost:8893/gmo/nbrc>
-FROM <http://localhost:8893/gmo/jcm>
-FROM <http://localhost:8893/gmo/manual>
-FROM <http://localhost:8893/gmo>
+FROM <http://growthmedium.org/media/20210316>
+FROM <http://growthmedium.org/gmo/v0.23>
 WHERE {
   VALUES ?medium_id { {{media_values}} }
   ?medium dcterms:identifier ?medium_id ;
@@ -57,11 +55,9 @@ PREFIX olo: <http://purl.org/ontology/olo/core#>
 PREFIX sio: <http://semanticscience.org/resource/>
 
 SELECT DISTINCT ?medium_id ?tax ?tax_name
-FROM <http://localhost:8893/gmo/nbrc>
-FROM <http://localhost:8893/gmo/jcm>
-FROM <http://localhost:8893/gmo/manual>
-FROM <http://localhost:8893/gmo/strain>
-FROM <http://localhost:8893/gmo/taxonomy>
+FROM <http://growthmedium.org/media/20210316>
+FROM <http://growthmedium.org/strain>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
 WHERE {
   VALUES ?medium_id { {{media_values}} }
   ?medium dcterms:identifier ?medium_id ;
@@ -81,10 +77,8 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?ancestor_gmo_id ?ancestor_gmo_label ?parent_gmo_id
-FROM <http://localhost:8893/gmo/nbrc>
-FROM <http://localhost:8893/gmo/jcm>
-FROM <http://localhost:8893/gmo/manual>
-FROM <http://localhost:8893/gmo>
+FROM <http://growthmedium.org/media/20210316>
+FROM <http://growthmedium.org/gmo/v0.23>
 WHERE {
   VALUES ?medium_id  { {{media_values}} }
   ?medium dcterms:identifier ?medium_id ;
@@ -118,6 +112,9 @@ WHERE {
       let media_info = {"gm_id": medium_id};
       let component_list = [];
       let organism_list = [];
+      let media_name = "";
+      let hit_media = medium_component_list.find((row) => row["medium_id"]["value"] == medium_id);
+      media_info["name"] = hit_media["medium_name"]["value"];
       medium_component_list.forEach((row) => {
         if (row["medium_id"]["value"] == medium_id) {
           component_list.push(row["gmo_id"]["value"].split("/").pop());
@@ -142,7 +139,7 @@ WHERE {
       let gmoid = row["ancestor_gmo_id"]["value"].split("/").pop();
       let gmo_label = row["ancestor_gmo_label"]["value"];
       let parent = row["parent_gmo_id"]["value"].split("/").pop();
-      return {"gmoid": gmoid, "name": gmo_label, parent: parent}
+      return {"gmo_id": gmoid, "name": gmo_label, parent: parent, function: null}
     });
 
     return {"media": media, "organisms": Array.from(new Set(tax_list)), "components": component_list }

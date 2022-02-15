@@ -66,10 +66,6 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT (COUNT(DISTINCT ?gm) AS ?total) ?limit ?offset
-#FROM <http://localhost:8893/gmo/nbrc>
-#FROM <http://localhost:8893/gmo/jcm>
-#FROM <http://localhost:8893/gmo/manual>
-#FROM <http://localhost:8893/gmo>
 FROM <http://growthmedium.org/media/20210316>
 FROM <http://growthmedium.org/gmo/v0.23>
 WHERE {
@@ -92,10 +88,6 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?gm ?label
-#FROM <http://localhost:8893/gmo/nbrc>
-#FROM <http://localhost:8893/gmo/jcm>
-#FROM <http://localhost:8893/gmo/manual>
-#FROM <http://localhost:8893/gmo>
 FROM <http://growthmedium.org/media/20210316>
 FROM <http://growthmedium.org/gmo/v0.23>
 WHERE {
@@ -116,10 +108,6 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?gm
-#FROM <http://localhost:8893/gmo/nbrc>
-#FROM <http://localhost:8893/gmo/jcm>
-#FROM <http://localhost:8893/gmo/manual>
-#FROM <http://localhost:8893/gmo>
 FROM <http://growthmedium.org/media/20210316>
 FROM <http://growthmedium.org/gmo/v0.23>
 WHERE {

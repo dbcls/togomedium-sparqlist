@@ -38,12 +38,9 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(DISTINCT ?medium_id) AS ?total) ?limit ?offset
-# TODO: switch ep and graph
-FROM <http://localhost:8893/gmo/strain>
-FROM <http://localhost:8893/gmo/taxonomy>
-FROM <http://localhost:8893/gmo/nbrc>
-FROM <http://localhost:8893/gmo/jcm>
-FROM <http://localhost:8893/gmo/manual>
+FROM <http://growthmedium.org/strain>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://growthmedium.org/media/20210316>
 WHERE {
   VALUES ?tax_ids { {{tax_values}} }
   ?tax_ids rdf:type ddbj-tax:Taxon .
@@ -72,12 +69,9 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT ?medium_id ?medium_name
-# TODO: switch ep and graph
-FROM <http://localhost:8893/gmo/strain>
-FROM <http://localhost:8893/gmo/taxonomy>
-FROM <http://localhost:8893/gmo/nbrc>
-FROM <http://localhost:8893/gmo/jcm>
-FROM <http://localhost:8893/gmo/manual>
+FROM <http://growthmedium.org/strain>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://growthmedium.org/media/20210316>
 WHERE {
   VALUES ?tax_ids { {{tax_values}} }
   ?tax_ids rdf:type ddbj-tax:Taxon .

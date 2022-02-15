@@ -161,7 +161,9 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(DISTINCT ?tax_id) AS ?total) ?limit ?offset
-FROM <http://localhost:8893/gmo/strain>
+FROM <http://growthmedium.org/strain>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://growthmedium.org/media/20210316>
 {
   ?phenotype a prov:Entity .
   {{temp_query_txt}}
@@ -192,13 +194,9 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT ?tax_id ?tax_name  #?strain ?strain_name
-FROM <http://localhost:8893/gmo/strain>
-# <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
-FROM <http://localhost:8893/gmo/taxonomy>
-#FROM <http://growthmedium.org/media/20210316>
-FROM <http://localhost:8893/gmo/nbrc>
-FROM <http://localhost:8893/gmo/jcm>
-FROM <http://localhost:8893/gmo/manual>
+FROM <http://growthmedium.org/strain>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://growthmedium.org/media/20210316>
 {
   ?phenotype a prov:Entity .
   {{temp_query_txt}}
