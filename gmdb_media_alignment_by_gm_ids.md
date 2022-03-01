@@ -22,7 +22,6 @@ http://growthmedium.org/sparql
 ```
 ## `medium_component`
 ```sparql
-PREFIX gm: <http://purl.jp/bio/10/gm/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
@@ -47,7 +46,6 @@ WHERE {
 
 ## `medium_organism`
 ```sparql
-PREFIX gm: <http://purl.jp/bio/10/gm/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
@@ -70,15 +68,15 @@ WHERE {
 
 ## `hieralcal_component_list`
 ```sparql
-PREFIX gm: <http://purl.jp/bio/10/gm/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
-SELECT DISTINCT ?ancestor_gmo_id ?ancestor_gmo_label ?parent_gmo_id
+SELECT DISTINCT ?ancestor_gmo_id ?ancestor_gmo_label ?parent_gmo_id ?disp_order ?category_name
 FROM <http://growthmedium.org/media/20210316>
 FROM <http://growthmedium.org/gmo/v0.23>
+FROM <http://growthmedium.org/gmo/v0.23/display_order>
 WHERE {
   VALUES ?medium_id  { {{media_values}} }
   ?medium dcterms:identifier ?medium_id ;
@@ -91,8 +89,10 @@ WHERE {
   ?gmo_id rdfs:subClassOf* ?ancestor_gmo_id .
    ?ancestor_gmo_id rdfs:label ?ancestor_gmo_label .
    FILTER (lang(?ancestor_gmo_label) = 'en')
-  ?ancestor_gmo_id rdfs:subClassOf ?parent_gmo_id .
-}
+  ?ancestor_gmo_id rdfs:subClassOf ?parent_gmo_id ;
+      gmo:display_order ?disp_order ;
+      gmo:category ?category_name .
+} ORDER BY ?disp_order
 ```
 
 
@@ -139,7 +139,12 @@ WHERE {
       let gmoid = row["ancestor_gmo_id"]["value"].split("/").pop();
       let gmo_label = row["ancestor_gmo_label"]["value"];
       let parent = row["parent_gmo_id"]["value"].split("/").pop();
-      return {"gmo_id": gmoid, "name": gmo_label, parent: parent, function: null}
+      if (parent == "GMO_000002") {
+        parent = null;
+      }
+      let category = row["category_name"]["value"];
+      let display_order = parseInt(row["disp_order"]["value"]);
+      return {"gmo_id": gmoid, "name": gmo_label, parent: parent, category: category, display_order: display_order}
     });
 
     return {"media": media, "organisms": Array.from(new Set(tax_list)), "components": component_list }
