@@ -5,13 +5,12 @@ Retrieve organism by phenotype
 ## Parameters
 
 * `growth_temp` range(min,max) of temperature
-  * default: 20,40
   * examples: 20,40
 * `growth_ph`  range(min,max) of pH
-  * default: 5,8
   * examples: 5,8
+* `growth_salinity`  range(min,max) of salinity percentage
+  * examples: 0,10
 * `MPO_10002` Oxygen requirement type
-  * default: MPO_04002
   * examples: MPO_04002
 * `MPO_07001` Gram Strain type
   * examples: MPO_07002
@@ -82,12 +81,42 @@ http://growthmedium.org/sparql
 
     let ph_query_txt = "";
     if (params["growth_ph"] && params["growth_ph"] != "") {
-      temp_val = params["growth_ph"].split(",").map((val) => { return val.trim()});
-      if (temp_val.length == 2 && temp_val[0].match(/^\-?[0-9\.]+$/) && temp_val[1].match(/^\-?[0-9\.]+$/) ) {
-        ph_query_txt = ph_criteria_query.replace(/#{min}/g, temp_val[0]).replace(/#{max}/g, temp_val[1]);
+      ph_val = params["growth_ph"].split(",").map((val) => { return val.trim()});
+      if (ph_val.length == 2 && ph_val[0].match(/^\-?[0-9\.]+$/) && ph_val[1].match(/^\-?[0-9\.]+$/) ) {
+        ph_query_txt = ph_criteria_query.replace(/#{min}/g, ph_val[0]).replace(/#{max}/g, ph_val[1]);
       }
     }
     return ph_query_txt;
+  }
+})
+```
+## `salinity_numeric_query_txt`
+```javascript
+({
+  json(params) {
+    const salinity_criteria_query = `
+     {
+      VALUES ?min_salinity_prop { mpo:MPO_10030 mpo:MPO_10033 }
+      VALUES ?max_salinity_prop { mpo:MPO_10029 mpo:MPO_10032 }
+      ?phenotype ?min_salinity_prop ?min_salinity_value .
+      ?phenotype ?max_salinity_prop ?max_salinity_value .
+      FILTER (?min_salinity_value >= #{min} && ?max_salinity_value <= #{max})
+    }
+    UNION
+    {
+      VALUES ?exact_salinity_prop { mpo:MPO_10028 mpo:MPO_10031 }
+      ?phenotype ?exact_salinity_prop ?exact_salinity_value .
+      FILTER (?exact_salinity_value >= #{min} && ?exact_salinity_value <= #{max})
+    }`;
+
+    let salinity_query_txt = "";
+    if (params["growth_salinity"] && params["growth_salinity"] != "") {
+      salinity_val = params["growth_salinity"].split(",").map((val) => { return val.trim()});
+      if (salinity_val.length == 2 && salinity_val[0].match(/^\-?[0-9\.]+$/) && salinity_val[1].match(/^\-?[0-9\.]+$/) ) {
+        salinity_query_txt = salinity_criteria_query.replace(/#{min}/g, salinity_val[0]).replace(/#{max}/g, salinity_val[1]);
+      }
+    }
+    return salinity_query_txt;
   }
 })
 ```
@@ -168,6 +197,7 @@ FROM <http://growthmedium.org/media/20210316>
   ?phenotype a prov:Entity .
   {{temp_query_txt}}
   {{ph_query_txt}}
+  {{salinity_numeric_query_txt}}
   {{oxygen_req_query_txt}}
   {{gram_strain_query_txt}}
   {{motility_query_txt}}
@@ -201,6 +231,7 @@ FROM <http://growthmedium.org/media/20210316>
   ?phenotype a prov:Entity .
   {{temp_query_txt}}
   {{ph_query_txt}}
+  {{salinity_numeric_query_txt}}
   {{oxygen_req_query_txt}}
   {{gram_strain_query_txt}}
   {{motility_query_txt}}
