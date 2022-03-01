@@ -10,6 +10,10 @@ Retrieve organism by phenotype
   * examples: 5,8
 * `growth_salinity`  range(min,max) of salinity percentage
   * examples: 0,10
+* `cell_length`  range(min,max) of cell length (µm)
+  * examples: 5,10
+* `cell_diameter`  range(min,max) of cell diameter (µm)
+  * examples: 0.5,10
 * `MPO_10002` Oxygen requirement type
   * examples: MPO_04002
 * `MPO_07001` Gram Strain type
@@ -121,6 +125,62 @@ http://growthmedium.org/sparql
 })
 ```
 
+## `cell_length_query_txt`
+```javascript
+({
+  json(params) {
+    const cell_length_criteria_query = `
+     {
+      ?phenotype mpo:MPO_00131 ?min_cell_length_value .
+      ?phenotype mpo:MPO_00132 ?max_cell_length_value .
+      FILTER (?min_cell_length_value >= #{min} && ?max_cell_length_value <= #{max})
+    }
+    UNION
+    {
+      ?phenotype mpo:MPO_00128 ?exact_cell_length_value .
+      FILTER (?exact_cell_length_value >= #{min} && ?exact_cell_length_value <= #{max})
+    }`;
+
+    let cell_length_query_txt = "";
+    if (params["cell_length"] && params["cell_length"] != "") {
+      cell_length_val = params["cell_length"].split(",").map((val) => { return val.trim()});
+      if (cell_length_val.length == 2 && cell_length_val[0].match(/^\-?[0-9\.]+$/) && cell_length_val[1].match(/^\-?[0-9\.]+$/) ) {
+        cell_length_query_txt = cell_length_criteria_query.replace(/#{min}/g, cell_length_val[0]).replace(/#{max}/g, cell_length_val[1]);
+      }
+    }
+    return cell_length_query_txt;
+  }
+})
+```
+
+## `cell_diameter_query_txt`
+```javascript
+({
+  json(params) {
+    const cell_diameter_criteria_query = `
+     {
+      ?phenotype mpo:MPO_00141 ?min_cell_diameter_value .
+      ?phenotype mpo:MPO_00142 ?max_cell_diameter_value .
+      FILTER (?min_cell_diameter_value >= #{min} && ?max_cell_diameter_value <= #{max})
+    }
+    UNION
+    {
+      ?phenotype mpo:MPO_00140 ?exact_cell_diameter_value .
+      FILTER (?exact_cell_diameter_value >= #{min} && ?exact_cell_diameter_value <= #{max})
+    }`;
+
+    let cell_diameter_query_txt = "";
+    if (params["cell_diameter"] && params["cell_diameter"] != "") {
+      cell_diameter_val = params["cell_diameter"].split(",").map((val) => { return val.trim()});
+      if (cell_diameter_val.length == 2 && cell_diameter_val[0].match(/^\-?[0-9\.]+$/) && cell_diameter_val[1].match(/^\-?[0-9\.]+$/) ) {
+        cell_diameter_query_txt = cell_diameter_criteria_query.replace(/#{min}/g, cell_diameter_val[0]).replace(/#{max}/g, cell_diameter_val[1]);
+      }
+    }
+    return cell_diameter_query_txt;
+  }
+})
+```
+
 ## `oxygen_req_query_txt`
 ```javascript
 ({
@@ -198,6 +258,8 @@ FROM <http://growthmedium.org/media/20210316>
   {{temp_query_txt}}
   {{ph_query_txt}}
   {{salinity_numeric_query_txt}}
+  {{cell_length_query_txt}}
+  {{cell_diameter_query_txt}}
   {{oxygen_req_query_txt}}
   {{gram_strain_query_txt}}
   {{motility_query_txt}}
@@ -232,6 +294,8 @@ FROM <http://growthmedium.org/media/20210316>
   {{temp_query_txt}}
   {{ph_query_txt}}
   {{salinity_numeric_query_txt}}
+  {{cell_length_query_txt}}
+  {{cell_diameter_query_txt}}
   {{oxygen_req_query_txt}}
   {{gram_strain_query_txt}}
   {{motility_query_txt}}
