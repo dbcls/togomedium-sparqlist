@@ -318,11 +318,17 @@ OFFSET {{offset}}
 ```javascript
 ({
   json({result, count}) {
+    let count_result = count.results.bindings[0];
+    let total = count_result ? parseInt(count_result["total"]["value"]) : 0;
+    let offset = count_result ? parseInt(count_result["offset"]["value"]) : 0;
+    let limit = count_result ? parseInt(count_result["limit"]["value"]) : 0;
+
     let rows = result.results.bindings;
-    return rows.map((row) => {
+    let contents = rows.map((row) => {
       let tax_id = row["tax_id"]["value"].split("/").pop();
       return {"tax_id": tax_id, "name": row["tax_name"]["value"]};
     });
+    return {"total": total, "offset": offset, "limit": limit, "contents": contents};
   }
 })
 ```
