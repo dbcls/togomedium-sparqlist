@@ -13,10 +13,19 @@ http://growthmedium.org/sparql
 ```javascript
 ({
   json(params) {
-    let tax_values = "";
-    return params["gm_ids"].split(",").map((taxid) => {
-      return "\""+ taxid.trim() + "\""
+    return params["gm_ids"].split(",").map((gmid) => {
+      return "\""+ gmid.trim() + "\""
     }).join(" ");
+  }
+})
+```
+## `media_id_list`
+```javascript
+({
+  json(params) {
+    return params["gm_ids"].split(",").map((gmid) => {
+      return gmid.trim();
+    });
   }
 })
 ```
@@ -100,7 +109,7 @@ WHERE {
 
 ```javascript
 ({
-  json({medium_component, medium_organism, hieralcal_component_list}) {
+  json({media_id_list, medium_component, medium_organism, hieralcal_component_list}) {
     let medium_component_list = medium_component.results.bindings;
     let medium_organism_list = medium_organism.results.bindings;
 
@@ -128,6 +137,18 @@ WHERE {
       media_info["components"] = Array.from(new Set(component_list));
       media_info["organisms"] = Array.from(new Set(organism_list));
       media.push(media_info);
+    });
+    // paramsの指定順にsort
+    let media_order = {};
+    media_id_list.map((gmid, idx) => {
+      media_order[gmid] = idx;
+    });
+    media.sort(function(a,b){
+      let a_order = media_order[a["gm_id"]];
+      let b_order = media_order[b["gm_id"]];
+      if( a_order < b_order ) return -1;
+      if( a_order > b_order ) return 1;
+      return 0;
     });
     // organisms
     let tax_list = medium_organism_list.map((row) => {
