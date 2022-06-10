@@ -92,11 +92,17 @@ OFFSET {{offset}}
 ```javascript
 ({
   json({result, count}) {
+    let count_result = count.results.bindings[0];
+    let total = count_result ? parseInt(count_result["total"]["value"]) : 0;
+    let offset = count_result ? parseInt(count_result["offset"]["value"]) : 0;
+    let limit = count_result ? parseInt(count_result["limit"]["value"]) : 0;
+
     let rows = result.results.bindings;
-    return rows.map((row) => {
+    let contents = rows.map((row) => {
       let medium_id = row["medium_id"]["value"].split("/").pop();
       return {"gm_id": medium_id, "name": row["medium_name"]["value"]};
     });
+    return {"total": total, "offset": offset, "limit": limit, "contents": contents};
   }
 })
 ```

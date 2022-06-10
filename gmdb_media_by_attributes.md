@@ -74,8 +74,6 @@ WHERE {
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
-LIMIT {{limit}}
-OFFSET {{offset}}
 ```
 ## `result` retrieve media with  hieralcal query
 
@@ -121,10 +119,15 @@ WHERE {
 ```javascript
 ({
   json({result, count, exact_result}) {
+    let count_result = count.results.bindings[0];
+    let total = count_result ? parseInt(count_result["total"]["value"]) : 0;
+    let offset = count_result ? parseInt(count_result["offset"]["value"]) : 0;
+    let limit = count_result ? parseInt(count_result["limit"]["value"]) : 0;
+
     let rows = result.results.bindings;
     let exact_rows = exact_result.results.bindings;
     let exact_match_gmo_id =  exact_rows.map((row) => { return row["gm"]["value"].split("/").pop()});
-    return rows.map((row) => {
+    let contents = rows.map((row) => {
       let gm_id = row["gm"]["value"].split("/").pop();
       // subClassOfを使用せずにヒットした場合はtrue, subClassOf*を使用して階層ヒットした場合はfalse
       if (exact_match_gmo_id.includes(gm_id)) {
@@ -133,6 +136,7 @@ WHERE {
         return {"gm_id": gm_id, "name": row["label"]["value"], "exact_match": false};
       }
     });
+    return {"total": total, "offset": offset, "limit": limit, "contents": contents};
   }
 })
 ```
