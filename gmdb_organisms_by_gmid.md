@@ -20,27 +20,23 @@ http://growthmedium.org/sparql
 
 ```sparql
 PREFIX taxont: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-PREFIX taxid: <http://identifiers.org/taxonomy/>
-PREFIX taxncbi: <http://www.ncbi.nlm.nih.gov/taxonomy/>
-PREFIX taxup: <http://purl.uniprot.org/taxonomy/>
 PREFIX gm: <http://purl.jp/bio/10/gm/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
-SELECT (COUNT (DISTINCT ?org) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
+SELECT (COUNT (DISTINCT ?tax_id) AS ?total) ?limit ?offset
+FROM <http://growthmedium.org/media/20210316>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-FROM <http://kegg/taxonomy/>
+FROM <http://growthmedium.org/strain>
 WHERE {
-  ?gm dcterms:identifier "{{gm_id}}" .
-  ?gm gmo:GMO_000114 ?org .
-  ?org gmo:GMO_000020 ?t .
-  ?t dcterms:identifier ?taxid .
-  ?t taxont:scientificName ?name
-  BIND(str(?taxid) AS ?tax_id)
+  ?media dcterms:identifier "{{gm_id}}" ;
+    gmo:GMO_000114 ?media_strain .
+  ?media_strain gmo:strain_id ?strain_id .
+  ?strain_id gmo:taxon ?strain_tax .
+  ?strain_tax dcterms:identifier ?tax_id .
+  ?strain_tax taxont:scientificName ?name .
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
@@ -50,9 +46,6 @@ WHERE {
 
 ```sparql
 PREFIX taxont: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-PREFIX taxid: <http://identifiers.org/taxonomy/>
-PREFIX taxncbi: <http://www.ncbi.nlm.nih.gov/taxonomy/>
-PREFIX taxup: <http://purl.uniprot.org/taxonomy/>
 PREFIX gm: <http://purl.jp/bio/10/gm/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -60,17 +53,16 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT DISTINCT ?tax_id ?name
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
+FROM <http://growthmedium.org/media/20210316>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-FROM <http://kegg/taxonomy/>
+FROM <http://growthmedium.org/strain>
 WHERE {
-  ?gm dcterms:identifier "{{gm_id}}" .
-  ?gm gmo:GMO_000114 ?org .
-  ?org gmo:GMO_000020 ?t .
-  ?t dcterms:identifier ?taxid .
-  ?t taxont:scientificName ?name
-  BIND(str(?taxid) AS ?tax_id)
+  ?media dcterms:identifier "{{gm_id}}" ;
+    gmo:GMO_000114 ?media_strain .
+  ?media_strain gmo:strain_id ?strain_id .
+  ?strain_id gmo:taxon ?strain_tax .
+  ?strain_tax dcterms:identifier ?tax_id .
+  ?strain_tax taxont:scientificName ?name .
 }
 LIMIT {{limit}}
 OFFSET {{offset}}
@@ -85,15 +77,15 @@ OFFSET {{offset}}
     let count_rows = count.results.bindings[0] ;
     let organisms = {} ;
     organisms.contents = [];
-    
+
     organisms.total = 0;
     organisms.limit = 0;
     organisms.offset = 0;
-    
+
     if (rows.length == 0) {
-      return organisms;      
+      return organisms;
     }
-    
+
     for(let i = 0; i < rows.length; i++) {
       organisms.contents.push({
         tax_id: {label: rows[i].tax_id.value,
@@ -101,14 +93,14 @@ OFFSET {{offset}}
         name: rows[i].name.value
       });
     }
-        
+
     organisms.columns = [];
     organisms.columns.push({key: "tax_id", label: "Organism"});
     organisms.columns.push({key: "name", label: "Name"});
     organisms.total = count_rows.total.value;
     organisms.limit = count_rows.limit.value;
     organisms.offset = count_rows.offset.value;
-    
+
     return organisms ;
   }
 })

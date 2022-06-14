@@ -35,7 +35,6 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(DISTINCT ?medium_id) AS ?total) ?limit ?offset
 FROM <http://growthmedium.org/strain>
@@ -44,7 +43,7 @@ FROM <http://growthmedium.org/media/20210316>
 WHERE {
   VALUES ?tax_ids { {{tax_values}} }
   ?tax_ids rdf:type ddbj-tax:Taxon .
-  ?search_tax  rdfs:subClassOf* ?tax_ids .
+  ?search_tax rdfs:subClassOf* ?tax_ids .
   ?strain gmo:taxon ?search_tax ;
     rdf:type sio:SIO_010055 .
   ?culture_for gmo:strain_id ?strain .
@@ -66,7 +65,6 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT ?medium_id ?medium_name
 FROM <http://growthmedium.org/strain>

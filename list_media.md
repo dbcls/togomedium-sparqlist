@@ -19,18 +19,16 @@ http://growthmedium.org/sparql
 ```sparql
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT (COUNT(DISTINCT ?gm_id) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
+FROM <http://growthmedium.org/media/20210316>
 
 WHERE {
-  ?gm a gmo:GMO_000001 ;
+  ?gm a gmo:GMO_00001 ;
       dcterms:identifier ?gm_id
   OPTIONAL {
-     ?gm rdfs:label|gmo:GMO_000102 ?label
+     ?gm rdfs:label ?label
   }
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
@@ -42,18 +40,16 @@ WHERE {
 ```sparql
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT DISTINCT *
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
+FROM <http://growthmedium.org/media/20210316>
 
 WHERE {
-  ?gm a gmo:GMO_000001 ;
+  ?gm a gmo:GMO_00001 ;
       dcterms:identifier ?gm_id
   OPTIONAL {
-     ?gm rdfs:label|gmo:GMO_000102 ?label
+     ?gm rdfs:label ?label
   }
 }
 LIMIT {{limit}}
@@ -80,7 +76,7 @@ OFFSET {{offset}}
     const total = !!info ? parseInt(info.total) : 0;
     const offset = !!info ? parseInt(info.offset) : 0;
     const limit = !!info ? parseInt(info.limit) : 0;
-    
+
     const KEY_GM_ID = "gm_id";
     const KEY_Label= "label";
     const columns = [

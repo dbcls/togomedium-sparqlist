@@ -23,7 +23,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT
   (COUNT(DISTINCT ?gmo_id) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/gmo/>
+FROM <http://growthmedium.org/gmo/v0.23>
 WHERE {
   ?c rdfs:subClassOf+ gmo:GMO_000002 ;
      dcterms:identifier ?gmo_id ;
@@ -34,7 +34,7 @@ WHERE {
    }
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
-} 
+}
 ```
 
 ## `result` retrieve GMO component information
@@ -50,7 +50,7 @@ SELECT
   (SAMPLE(?c) AS ?component)
   (SAMPLE(?l) AS ?label)
   (GROUP_CONCAT(?alt_label; SEPARATOR = ", ") AS ?alt_labels)
-FROM <http://growthmedium.org/gmo/>
+FROM <http://growthmedium.org/gmo/v0.23>
 
 WHERE {
   ?c rdfs:subClassOf+ gmo:GMO_000002 ;
@@ -72,12 +72,12 @@ OFFSET {{offset}}
 ```javascript
 ({
   json({result, count}) {
-    
+
     let rows = result.results.bindings;
     let count_rows = count.results.bindings[0];
     let components = {};
     components.contents = [];
-    
+
     components.total = 0;
     components.limit = 0;
     components.offset = 0;
@@ -100,14 +100,14 @@ OFFSET {{offset}}
         });
       }
     }
-    
+
     components.columns = [];
     components.columns.push({key: "gmo_id", label: "GMO ID"});
     components.columns.push({key: "name", label: "Name"});
     components.total = count_rows.total.value ;
     components.limit = count_rows.limit.value ;
     components.offset = count_rows.offset.value ;
-    return components;    
+    return components;
   }
 })
 ```

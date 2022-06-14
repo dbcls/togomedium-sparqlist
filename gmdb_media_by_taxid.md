@@ -16,30 +16,45 @@ List growth media used for organism(s) with the given NCBI taxonomy ID.
 
 http://growthmedium.org/sparql
 
+## `tax_values`
+```javascript
+({
+  json(params) {
+    let tax_values = "";
+    return params["tax_id"].split(",").map((taxid) => {
+      return "taxid:" + taxid.trim()
+    }).join(" ");
+  }
+})
+```
+
 ## `count` count results
 
 ```sparql
-PREFIX taxont: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-PREFIX taxid: <http://identifiers.org/taxonomy/>
+#DEFINE sql:select-option "order"
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX taxid: <http://identifiers.org/taxonomy/>
+PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
-SELECT (COUNT(DISTINCT ?gm) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
+
+SELECT (COUNT(DISTINCT ?medium) AS ?total) ?limit ?offset
+FROM <http://growthmedium.org/strain>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-FROM <http://kegg/taxonomy/>
+FROM <http://growthmedium.org/media/20210316>
 WHERE {
-  VALUES ?search_tax { taxid:{{tax_id}} }
-  ?search_tax rdf:type taxont:Taxon .
-  ?tax rdfs:subClassOf* ?search_tax .
-  ?org gmo:GMO_000020 ?tax .
-  ?gm gmo:GMO_000114 ?org .
-  ?gm dcterms:identifier ?gm_id .
-  OPTIONAL {
-    ?gm rdfs:label|gmo:GMO_000102 ?label
-  }
+  VALUES ?tax_ids { {{tax_values}} }
+  ?tax_ids rdf:type ddbj-tax:Taxon .
+  ?search_tax rdfs:subClassOf* ?tax_ids .
+  ?strain gmo:taxon ?search_tax ;
+    rdf:type sio:SIO_010055 .
+  ?culture_for gmo:strain_id ?strain .
+  ?medium gmo:GMO_000114 ?culture_for ;
+    dcterms:identifier ?medium_id ;
+    rdf:type gmo:GMO_00001 ; #exist media
+   rdfs:label ?media_name .
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
@@ -50,27 +65,29 @@ WHERE {
 ## `result` retrieve media information
 
 ```sparql
-PREFIX taxont: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-PREFIX taxid: <http://identifiers.org/taxonomy/>
+#DEFINE sql:select-option "order"
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX taxid: <http://identifiers.org/taxonomy/>
+PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
-SELECT DISTINCT ?gm_id ?label
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
+SELECT DISTINCT (?medium_id AS ?gm_id) (?media_name AS ?label)
+FROM <http://growthmedium.org/strain>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-FROM <http://kegg/taxonomy/>
+FROM <http://growthmedium.org/media/20210316>
 WHERE {
-  VALUES ?search_tax { taxid:{{tax_id}} }
-  ?search_tax rdf:type taxont:Taxon .
-  ?tax rdfs:subClassOf* ?search_tax .
-  ?org gmo:GMO_000020 ?tax .
-  ?gm gmo:GMO_000114 ?org .
-  ?gm dcterms:identifier ?gm_id .
-  OPTIONAL {
-    ?gm rdfs:label|gmo:GMO_000102 ?label
-  }
+  VALUES ?tax_ids { {{tax_values}} }
+  ?tax_ids rdf:type ddbj-tax:Taxon .
+  ?search_tax  rdfs:subClassOf* ?tax_ids .
+  ?strain gmo:taxon ?search_tax ;
+    rdf:type sio:SIO_010055 .
+  ?culture_for gmo:strain_id ?strain .
+  ?medium gmo:GMO_000114 ?culture_for ;
+    dcterms:identifier ?medium_id ;
+    rdf:type gmo:GMO_00001 ; #exist media
+   rdfs:label ?media_name .
 }
 LIMIT {{limit}}
 OFFSET {{offset}}

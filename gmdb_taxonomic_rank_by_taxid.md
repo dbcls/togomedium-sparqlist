@@ -17,12 +17,7 @@ http://growthmedium.org/sparql
 ```sparql
 PREFIX taxont: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
-PREFIX taxncbi: <http://www.ncbi.nlm.nih.gov/taxonomy/>
-PREFIX taxup: <http://purl.uniprot.org/taxonomy/>
-PREFIX gm: <http://purl.jp/bio/10/gm/>
-PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT DISTINCT *
@@ -32,9 +27,7 @@ WHERE {
   taxid:{{tax_id}} dcterms:identifier ?taxid ;
     taxont:rank ?rank ;
     taxont:scientificName ?name .
-  OPTIONAL {
-    taxid:{{tax_id}} rdfs:seeAlso ?taxup .
-  }
+
   OPTIONAL {
     taxid:{{tax_id}} rdfs:subClassOf+ ?genus .
     ?genus taxont:rank taxont:Genus ;
@@ -87,7 +80,7 @@ WHERE {
   json({result}) {
     let rows = result.results.bindings ;
     let rank = {} ;
-    
+
     rank.scientific_name = rows[0].name.value ;
     rank.taxid = rows[0].taxid.value ;
     rank.rank = rows[0].rank.value ;
@@ -95,7 +88,7 @@ WHERE {
       rank.authority_name = rows[0].authority_name.value ;
     }
     rank.lineage = [] ;
-    
+
     let superkingdom = {};
     superkingdom.rank = "superkingdom" ;
     if (rows[0].superkingdom) {
@@ -121,7 +114,7 @@ WHERE {
       phylum.taxid = "NA" ;
     }
     rank.lineage.push(phylum) ;
-    
+
     let klass = {};
     klass.rank = "class" ;
     if (rows[0].class) {
@@ -148,7 +141,7 @@ WHERE {
     }
     rank.lineage.push(order) ;
 
-    let family = {} ;  
+    let family = {} ;
     family.rank = "family"
     if (rows[0].family) {
       family.label = rows[0].family_label.value ;
@@ -160,8 +153,8 @@ WHERE {
       family.taxid = "NA" ;
     }
     rank.lineage.push(family) ;
-    
-    let genus = {} ;  
+
+    let genus = {} ;
     genus.rank = "genus"
     if (rows[0].genus) {
       genus.label = rows[0].genus_label.value ;
@@ -173,7 +166,7 @@ WHERE {
       genus.taxid = "NA" ;
     }
     rank.lineage.push(genus) ;
-    
+
     if (rows[0].typematerial) {
       let type_materials = [] ;
       let other_type_materials = [] ;
@@ -188,7 +181,7 @@ WHERE {
       rank.type_material = [];
       rank.other_type_material = [];
       for (let i = 0; i < type_materials.length; i++) {
-      
+
         if (!type_materials[i].match(/\[\[([\w\s]+)\]\]/)) {
           rank.type_material.push({"label": type_materials[i]});
         } else if (type_materials[i].match(/^(.+)\[\[([\w\s]+)\]\]/)) {
