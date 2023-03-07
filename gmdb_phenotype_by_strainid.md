@@ -3,12 +3,12 @@
 ## Parameters
 
 * `strain_id` TogoMedium Strain ID
-  * default: 000000001
+  * default: S1
 * `limit` limit
   * default: 10
 * `offset` offset
   * default: 1
- 
+
  ## Endpoint
 
 http://growthmedium.org/sparql
@@ -23,7 +23,7 @@ prefix prov:    <http://www.w3.org/ns/prov#>
 prefix mpo: <http://purl.jp/bio/10/mpo#>
 
 SELECT (COUNT(?phenotype) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/strain>
+FROM <http://growthmedium.org/strain/2023>
 FROM <http://growthmedium.org/mpo/v0.74>
 {
   <http://togomedium.org/strain/{{strain_id}}>  sio:SIO_001279 ?phenotype .
@@ -53,9 +53,9 @@ prefix prov:    <http://www.w3.org/ns/prov#>
 prefix mpo: <http://purl.jp/bio/10/mpo#>
 
 SELECT DISTINCT ?source_uri ?source_label
-  ?phenotype_property ?property_type ?property_label 
+  ?phenotype_property ?property_type ?property_label
   ?phenotype_value ?value_type ?value_label
-FROM <http://growthmedium.org/strain>
+FROM <http://growthmedium.org/strain/2023>
 FROM <http://growthmedium.org/mpo/v0.74>
 WHERE {
   <http://togomedium.org/strain/{{strain_id}}>  sio:SIO_001279 ?phenotype .

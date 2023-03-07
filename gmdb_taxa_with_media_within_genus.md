@@ -6,7 +6,7 @@ Retrieve tax_ids with media within genus.
 
 * `tax_ids` Taxonomy ID (multiple)
   * default: 77580,28024,2771,38275,2
-  
+
 ## Endpoint
 
 http://growthmedium.org/sparql
@@ -37,9 +37,8 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT ?tax_ids COUNT(?medium_id) AS ?media_count
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
-FROM <http://growthmedium.org/strain>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
-FROM <http://growthmedium.org/media/20210316>
+FROM <http://growthmedium.org/strain/2023>
+FROM <http://growthmedium.org/media/2023>
 WHERE {
   {
     SELECT ?tax_ids
@@ -57,7 +56,7 @@ WHERE {
     rdf:type sio:SIO_010055 .
   ?culture_for gmo:strain_id ?strain .
   ?medium_id gmo:GMO_000114 ?culture_for ;
-    rdf:type gmo:GMO_00001 ; #exist media
+    rdf:type gmo:GMO_000001 ; #exist media
    rdfs:label ?medium_name .
 } GROUP BY ?tax_ids
 ```

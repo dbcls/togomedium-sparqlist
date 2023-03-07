@@ -2,7 +2,8 @@
 
 ## Parameters
 * `gm_ids` list of medium id
-  * default: SY4047,JCM_M900
+  * default: M2794,M941
+  * examples: SY4047,JCM_M900
 
 ## Endpoint
 http://growthmedium.org/sparql
@@ -22,18 +23,21 @@ http://growthmedium.org/sparql
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX tax:  <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
-SELECT DISTINCT ?medium_id ?medium_name ?strain_id ?strain_name ?tax ?tax_name ?ancestor_tax ?ancestor_tax_name ?rank
-FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/strain>
+SELECT DISTINCT ?medium_id ?original_media_id ?medium_name ?strain_id ?strain_name ?tax ?tax_name ?ancestor_tax ?ancestor_tax_name ?rank
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
 WHERE {
-  VALUES ?medium_id { {{media_values}} }
+  VALUES ?medium_no { {{media_values}} }
   VALUES ?rank { tax:Superkingdom  tax:Phylum tax:Class tax:Order tax:Family tax:Genus tax:Species }
-  ?medium dcterms:identifier ?medium_id ;
+  ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
+    dcterms:identifier ?medium_id ;
+    skos:altLabel ?original_media_id ;
     rdfs:label ?medium_name ;
     gmo:GMO_000114/gmo:strain_id ?strain .
   ?strain a sio:SIO_010055 ;
@@ -59,6 +63,7 @@ WHERE {
         if(!existingMedium) {
             medium.gm_id = row.medium_id.value;
             medium.label = row.medium_name.value;
+            medium.original_media_id = row.original_media_id.value;
             medium.organisms = [];
             output.push(medium);
         }

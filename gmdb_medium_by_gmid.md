@@ -5,8 +5,8 @@ Retrieve a growth medium with the given growth medium ID.
 ## Parameters
 
 * `gm_id` Growth medium ID
-  * default: NBRC_M249
-  * examples: JCM_M1, NBRC_M1039, SY1, HM_D00088_mse, ...
+  * default: M1470
+  * examples: NBRC_M249, M6, JCM_M1, NBRC_M1039, SY1, HM_D00088_mse, ...
 
 ## Endpoint
 
@@ -15,16 +15,18 @@ http://growthmedium.org/sparql
 ## `metadata` retrieve medium metadata
 
 ```sparql
-prefix gmo:     <http://purl.jp/bio/10/gmo/>
-prefix dcterms: <http://purl.org/dc/terms/>
-prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX gmo:     <http://purl.jp/bio/10/gmo/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-SELECT ?gm ?name ?src_url ?ph
-FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+SELECT ?gm ?name ?original_media_id ?src_url ?ph
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/gmo/v0.24>
 {
   VALUES ?gm_no { "{{gm_id}}" }
-  ?gm dcterms:identifier ?gm_no ;
+  ?gm (dcterms:identifier | skos:altLabel) ?gm_no ;
+    skos:altLabel ?original_media_id ;
     rdfs:label ?name ;
     gmo:GMO_000108 ?src_url .
   OPTIONAL { ?gm gmo:ph ?ph }
@@ -34,22 +36,23 @@ FROM <http://growthmedium.org/gmo/v0.23>
 
 ```sparql
 DEFINE sql:select-option "order"
-prefix gm:     <http://togomedium.org/>
-prefix gmo:     <http://purl.jp/bio/10/gmo/>
-prefix dcterms: <http://purl.org/dc/terms/>
-prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> 
-prefix xsd:     <http://www.w3.org/2001/XMLSchema#>
-prefix olo:     <http://purl.org/ontology/olo/core#>
-prefix sio:     <http://semanticscience.org/resource/>
+PREFIX gm:     <http://togomedium.org/>
+PREFIX gmo:     <http://purl.jp/bio/10/gmo/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+PREFIX olo:     <http://purl.org/ontology/olo/core#>
+PREFIX sio:     <http://semanticscience.org/resource/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 SELECT ?paragraph_index ?subcomponent_name ?component_name ?volume ?unit ?conc_value ?conc_unit ?gmo ?gmo_id ?label ?property_id ?property ?property_label ?role_id ?role ?role_label
-FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/gmo/v0.24>
 FROM <http://growthmedium.org/uo>
 {
   VALUES ?medium_no { "{{gm_id}}" }
-  ?medium dcterms:identifier ?medium_no ;
+  ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
     olo:slot ?slot.
   ?slot olo:index ?paragraph_index ;
    olo:item ?component_table .
@@ -92,19 +95,20 @@ FROM <http://growthmedium.org/uo>
 DEFINE sql:select-option "order"
 prefix gmo:     <http://purl.jp/bio/10/gmo/>
 prefix dcterms: <http://purl.org/dc/terms/>
-prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> 
+prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
 prefix olo:     <http://purl.org/ontology/olo/core#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 SELECT ?paragraph_index ?comment
-FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/gmo/v0.24>
 {
-  VALUES ?medium_no {  "{{gm_id}}" }
-  ?medium dcterms:identifier ?medium_no ;
+  VALUES ?medium_no { "{{gm_id}}" }
+  ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
     olo:slot ?slot.
   ?slot olo:index ?paragraph_index ;
    olo:item ?paragraph .
-  ?paragraph rdf:type gmo:Comment; 
+  ?paragraph rdf:type gmo:Comment;
     rdfs:comment ?comment .
 } ORDER BY ?paragraph_index
 ```
@@ -205,7 +209,7 @@ FROM <http://growthmedium.org/gmo/v0.23>
         items: obj.items.reduce((accum, current) => reduceComponentItems(accum, current), []),
       }));
     const comments = comment_list.results.bindings.map((obj) => parseSparqlObject(obj));
-    return {meta, components, comments};    
+    return {meta, components, comments};
   }
 })
 ```

@@ -39,11 +39,11 @@ WHERE {
 ({
   json({children_list}) {
     let list = children_list.results.bindings;
-    return list.map((row) => { 
+    return list.map((row) => {
       let tax_id = row["tax"]["value"].split("/").pop();
       let rank = row["rank"]["value"].split("/").pop();
       return {"tax_id": tax_id, "name": row["name"]["value"], "rank": rank}
-    });    
+    });
   }
 })
 ```

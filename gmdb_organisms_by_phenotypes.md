@@ -250,9 +250,9 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(DISTINCT ?tax_id) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/strain>
+FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
-FROM <http://growthmedium.org/media/20210316>
+FROM <http://growthmedium.org/media/2023>
 {
   ?phenotype a prov:Entity .
   {{temp_query_txt}}
@@ -272,7 +272,7 @@ FROM <http://growthmedium.org/media/20210316>
   ?tax_id rdfs:label ?tax_name .
   ?culture_for gmo:strain_id ?strain .
   ?medium_id gmo:GMO_000114 ?culture_for .
-  ?medium_id rdf:type gmo:GMO_00001 .
+  ?medium_id rdf:type gmo:GMO_000001 .
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
@@ -286,9 +286,9 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT ?tax_id ?tax_name  #?strain ?strain_name
-FROM <http://growthmedium.org/strain>
+FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
-FROM <http://growthmedium.org/media/20210316>
+FROM <http://growthmedium.org/media/2023>
 {
   ?phenotype a prov:Entity .
   {{temp_query_txt}}
@@ -308,7 +308,7 @@ FROM <http://growthmedium.org/media/20210316>
   ?tax_id rdfs:label ?tax_name .
   ?culture_for gmo:strain_id ?strain .
   ?medium_id gmo:GMO_000114 ?culture_for .
-  ?medium_id rdf:type gmo:GMO_00001 . #exist media
+  ?medium_id rdf:type gmo:GMO_000001 . #exist media
 }
 LIMIT {{limit}}
 OFFSET {{offset}}
