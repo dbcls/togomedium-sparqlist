@@ -17,52 +17,15 @@ Show a list of growth media with the given GM ID(s).
 
 http://growthmedium.org/sparql
 
-## `gm_id_pettern` Parse_argument
+## `media_values`
 ```javascript
 ({
   json(params) {
-    let tg_gm_id_list = [];
-    let org_gm_id_list = [];
-    let tg_pattern = "";
-    let org_pattern = "";
-    params["gm_ids"].split(",").map((val) => {
-      if (val.startsWith("M")) {
-        tg_gm_id_list.push(val.trim())
-      } else {
-        org_gm_id_list.push(val.trim())
-      }
-    });
-    if (tg_gm_id_list.length > 0) {
-      tg_pattern = "VALUES ?tg_gm_id { "
-      tg_pattern += tg_gm_id_list.map((gmid) => {
-        return "\""+ gmid.trim() + "\""
-      }).join(" ");
-      tg_pattern += " } "
-      tg_pattern += "?medium_uri dcterms:identifier ?tg_gm_id ."
-    }
-    if (org_gm_id_list.length > 0) {
-      org_pattern = "VALUES ?org_gm_id { "
-      org_pattern += org_gm_id_list.map((gmid) => {
-        return "\""+ gmid.trim() + "\""
-      }).join(" ");
-      org_pattern += " } "
-      org_pattern += "?medium_uri skos:altLabel ?org_gm_id ."
-    }
-    console.log(tg_pattern);
-    console.log(org_pattern);
-    if (tg_pattern != "" && org_pattern != "") { //両パターンの培地IDの指定
-      let union_pattern = "{" + tg_pattern + "}\n";
-      union_pattern += "UNION\n";
-      union_pattern += "{" + org_pattern + "}\n";
-      return union_pattern;
-    } else if (tg_pattern != "") {
-      return tg_pattern;
-    } else {
-      return org_pattern;
-    }
+    return params["gm_ids"].split(",").map((gmid) => {
+      return "\""+ gmid.trim() + "\""
+    }).join(" ");
   }
 })
-
 ```
 
 ## `count` count results
@@ -76,9 +39,10 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 SELECT (COUNT(DISTINCT ?medium_uri) AS ?total) ?limit ?offset
 FROM <http://growthmedium.org/media/2023>
 WHERE {
-  {{gm_id_pettern}}
-  ?medium_uri rdf:type gmo:GMO_000001 ;
-    dcterms:identifier ?gm_id ;
+  VALUES ?medium_no { {{media_values}} }
+  ?medium_uri (dcterms:identifier | skos:altLabel) ?medium_no ;
+    rdf:type gmo:GMO_000001 ;
+    dcterms:identifier ?media_id ;
     skos:altLabel ?original_media_id ;
     rdfs:label ?media_name .
   BIND("{{limit}}" AS ?limit)
@@ -97,8 +61,9 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 SELECT DISTINCT ?media_id ?original_media_id ?media_name
 FROM <http://growthmedium.org/media/2023>
 WHERE {
-  {{gm_id_pettern}}
-  ?medium_uri rdf:type gmo:GMO_000001 ;
+  VALUES ?medium_no { {{media_values}} }
+  ?medium_uri (dcterms:identifier | skos:altLabel) ?medium_no ;
+    rdf:type gmo:GMO_000001 ;
     dcterms:identifier ?media_id ;
     skos:altLabel ?original_media_id ;
     rdfs:label ?media_name .

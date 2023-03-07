@@ -16,19 +16,6 @@ Retrieve organisms which are able to be cultured in the given growth medium.
 
 http://growthmedium.org/sparql
 
-## `gmid_predicate`
-```javascript
-({
-  json(params) {
-    if (params["gm_id"].startsWith("M")) {
-      return "dcterms:identifier";
-    } else {
-      return "skos:altLabel";
-    }
-  }
-})
-```
-
 ## `count` count results
 
 ```sparql
@@ -46,7 +33,7 @@ FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://growthmedium.org/media/2023>
 WHERE {
-  ?medium_id {{gmid_predicate}} "{{gm_id}}" ;
+  ?medium_id (dcterms:identifier | skos:altLabel) "{{gm_id}}" ;
     gmo:GMO_000114 ?culture_for ;
     rdf:type  gmo:GMO_000001 . #exist media
   ?culture_for gmo:strain_id ?strain .
@@ -79,7 +66,7 @@ FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://growthmedium.org/media/2023>
 {
-  ?medium_id {{gmid_predicate}} "{{gm_id}}" ;
+  ?medium_id (dcterms:identifier | skos:altLabel) "{{gm_id}}" ;
     gmo:GMO_000114 ?culture_for ;
     rdf:type  gmo:GMO_000001 . #exist media
   ?culture_for gmo:strain_id ?strain .
@@ -104,15 +91,15 @@ OFFSET {{offset}}
     let count_rows = count.results.bindings[0] ;
     let organisms = {} ;
     organisms.contents = [];
-    
+
     organisms.total = 0;
     organisms.limit = 0;
     organisms.offset = 0;
-    
+
     if (rows.length == 0) {
-      return organisms;      
+      return organisms;
     }
-    
+
     for(let i = 0; i < rows.length; i++) {
       organisms.contents.push({
         tax_id: {label: rows[i].tax_id.value,
@@ -120,14 +107,14 @@ OFFSET {{offset}}
         name: rows[i].name.value
       });
     }
-        
+
     organisms.columns = [];
     organisms.columns.push({key: "tax_id", label: "Organism"});
     organisms.columns.push({key: "name", label: "Name"});
     organisms.total = count_rows.total.value;
     organisms.limit = count_rows.limit.value;
     organisms.offset = count_rows.offset.value;
-    
+
     return organisms ;
   }
 })
