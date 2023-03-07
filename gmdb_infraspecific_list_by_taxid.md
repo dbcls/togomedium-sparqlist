@@ -21,24 +21,25 @@ http://growthmedium.org/sparql
 DEFINE sql:select-option "order"
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX taxo: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 
 SELECT  (COUNT(DISTINCT ?tax) AS ?total)  ?limit ?offset
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-#FROM <http://kegg/taxonomy/>
-FROM <http://growthmedium.org/media/>
-#FROM <http://growthmedium.org/gmo/>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/strain/2023>
 WHERE {
   VALUES ?search_tax_id { taxid:{{tax_id}} }
-  ?search_tax_id rdf:type taxo:Taxon .
+  ?search_tax_id rdf:type ddbj-tax:Taxon .
   ?infraxpecific_tax rdfs:subClassOf* ?search_tax_id .
-  ?infraxpecific_tax taxo:rank taxo:Species .
-  ?tax rdfs:subClassOf* ?infraxpecific_tax .  
-  ?org gmo:GMO_000020 ?tax .
-  ?gm gmo:GMO_000114 ?org .
-  ?tax taxo:scientificName ?name ;
-    taxo:rank ?rank_uri .
+  ?infraxpecific_tax ddbj-tax:rank ddbj-tax:Species .
+  ?tax rdfs:subClassOf* ?infraxpecific_tax .
+  ?strain gmo:taxon ?tax .
+  ?culture_for gmo:strain_id ?strain .
+  ?medium gmo:GMO_000114 ?culture_for ;
+    rdf:type  gmo:GMO_000001 . #exist media
+  ?tax ddbj-tax:scientificName ?name ;
+    ddbj-tax:rank ?rank_uri .
   ?rank_uri rdfs:label ?rank .
   FILTER(!REGEX(?name, "Candidatus"))
   BIND("{{limit}}" AS ?limit)
@@ -52,24 +53,25 @@ WHERE {
 DEFINE sql:select-option "order"
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX taxo: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 
 SELECT  DISTINCT ?tax ?name ?rank
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-#FROM <http://kegg/taxonomy/>
-FROM <http://growthmedium.org/media/>
-#FROM <http://growthmedium.org/gmo/>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/strain/2023>
 WHERE {
   VALUES ?search_tax_id { taxid:{{tax_id}} }
-  ?search_tax_id rdf:type taxo:Taxon .
+  ?search_tax_id rdf:type ddbj-tax:Taxon .
   ?infraxpecific_tax rdfs:subClassOf* ?search_tax_id .
-  ?infraxpecific_tax taxo:rank taxo:Species .
-  ?tax rdfs:subClassOf* ?infraxpecific_tax .  
-  ?org gmo:GMO_000020 ?tax .
-  ?gm gmo:GMO_000114 ?org .
-  ?tax taxo:scientificName ?name ;
-    taxo:rank ?rank_uri .
+  ?infraxpecific_tax ddbj-tax:rank ddbj-tax:Species .
+  ?tax rdfs:subClassOf* ?infraxpecific_tax .
+  ?strain gmo:taxon ?tax .
+  ?culture_for gmo:strain_id ?strain .
+  ?medium gmo:GMO_000114 ?culture_for ;
+    rdf:type  gmo:GMO_000001 . #exist media
+  ?tax ddbj-tax:scientificName ?name ;
+    ddbj-tax:rank ?rank_uri .
   ?rank_uri rdfs:label ?rank .
   FILTER(!REGEX(?name, "Candidatus"))
 } ORDER BY ?name
@@ -121,7 +123,7 @@ OFFSET {{offset}}
         [KEY_NAME]: r.name,
       }));
     //
-    return {total, offset, limit, contents, columns};    
+    return {total, offset, limit, contents, columns};
   }
 })
 ```

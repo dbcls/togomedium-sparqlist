@@ -19,27 +19,27 @@ http://growthmedium.org/sparql
 ## `count` count results
 
 ```sparql
-PREFIX taxont: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
-SELECT (COUNT(DISTINCT ?gm) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
+SELECT (COUNT(DISTINCT ?medium) AS ?total) ?limit ?offset
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-FROM <http://kegg/taxonomy/>
 WHERE {
   VALUES ?search_tax { taxid:{{tax_id}} }
-  ?search_tax rdf:type taxont:Taxon .
+  ?search_tax rdf:type ddbj-tax:Taxon .
   ?tax rdfs:subClassOf* ?search_tax .
-  ?org gmo:GMO_000020 ?tax .
-  ?gm gmo:GMO_000114 ?org .
-  ?gm dcterms:identifier ?gm_id .
-  OPTIONAL {
-    ?gm rdfs:label|gmo:GMO_000102 ?label
-  }
+  ?strain gmo:taxon ?tax .
+  ?culture_for gmo:strain_id ?strain .
+  ?medium gmo:GMO_000114 ?culture_for ;
+    rdf:type  gmo:GMO_000001 ; #exist media
+    rdfs:label ?label ;
+    dcterms:identifier ?media_id ;
+    skos:altLabel ?original_media_id .
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
@@ -50,27 +50,27 @@ WHERE {
 ## `result` retrieve media information
 
 ```sparql
-PREFIX taxont: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
-SELECT DISTINCT ?gm_id ?label
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
+SELECT DISTINCT ?media_id ?original_media_id ?label
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-FROM <http://kegg/taxonomy/>
 WHERE {
   VALUES ?search_tax { taxid:{{tax_id}} }
-  ?search_tax rdf:type taxont:Taxon .
+  ?search_tax rdf:type ddbj-tax:Taxon .
   ?tax rdfs:subClassOf* ?search_tax .
-  ?org gmo:GMO_000020 ?tax .
-  ?gm gmo:GMO_000114 ?org .
-  ?gm dcterms:identifier ?gm_id .
-  OPTIONAL {
-    ?gm rdfs:label|gmo:GMO_000102 ?label
-  }
+  ?strain gmo:taxon ?tax .
+  ?culture_for gmo:strain_id ?strain .
+  ?medium gmo:GMO_000114 ?culture_for ;
+    rdf:type  gmo:GMO_000001 ; #exist media
+    rdfs:label ?label ;
+    dcterms:identifier ?media_id ;
+    skos:altLabel ?original_media_id .
 }
 LIMIT {{limit}}
 OFFSET {{offset}}
@@ -97,19 +97,22 @@ OFFSET {{offset}}
     const offset = !!info ? parseInt(info.offset) : 0;
     const limit = !!info ? parseInt(info.limit) : 0;
 
-    const KEY_GM_ID = "gm_id";
+    const KEY_GM_ID = "media_id";
+    const KEY_ORGINAL_GM_ID = "original_media_id";
     const KEY_NAME = "name";
     const columns = [
       {key: KEY_GM_ID, label: "GM ID"},
+      {key: KEY_ORGINAL_GM_ID, label: "Original Media ID"},
       {key: KEY_NAME, label: "Name"},
     ];
     const contents = result.results.bindings
       .map((r) => parseSparqlObject(r))
       .map((item) => ({
         [KEY_NAME]: !!item.label ? item.label : "",
+        [KEY_ORGINAL_GM_ID]: item.original_media_id,
         [KEY_GM_ID]: {
-          label: item.gm_id,
-          href: `/medium/${item.gm_id}`,
+          label: item.media_id,
+          href: `/medium/${item.media_id}`,
         },
       }));
 

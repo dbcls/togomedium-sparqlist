@@ -22,7 +22,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT DISTINCT ?gmo ?pref_label ?id ?label_ja ?alt_label_en ?alt_label_ja ?super_gmo ?super_gmo_id ?super_gmo_label_en
                 ?sub_gmo ?sub_gmo_label_en ?sub_gmo_id ?link ?property ?property_id ?property_label_en ?role ?role_id ?role_label_en
-FROM <http://growthmedium.org/gmo/>
+FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
   VALUES ?gmo { <http://purl.jp/bio/10/gmo/{{gmo_id}}> } .
   ?gmo skos:prefLabel ?pref_label ;
@@ -130,7 +130,7 @@ WHERE {
             "label_en": rows[i].property_label_en.value
           });
         }
-/*        
+/*
         if (!(rows[i].property_id.value in properties)) {
           properties[rows[i].property_id.value] = {} ;
           properties[rows[i].property_id.value].uri = rows[i].property.value ;
@@ -156,7 +156,7 @@ WHERE {
     gmo_component["alt_labels_en"] = alt_labels_en ;
     gmo_component["alt_labels_ja"] = alt_labels_ja ;
     gmo_component["super_classes"] = super_classes ;
-    gmo_component["sub_classes"] = sub_classes ;   
+    gmo_component["sub_classes"] = sub_classes ;
     gmo_component["properties"] = properties ;
     gmo_component["roles"] = roles ;
     gmo_component["links"] = links ;

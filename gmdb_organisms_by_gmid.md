@@ -5,7 +5,7 @@ Retrieve organisms which are able to be cultured in the given growth medium.
 ## Parameters
 
 * `gm_id` Growth medium ID
-  * default: JCM_M13
+  * default: M6
   * examples: NBRC_M1005, JCM_M1, NBRC_M1039, SY1, HM_D00088_mse, ...
 * `limit` limit
   * default: 10
@@ -16,31 +16,47 @@ Retrieve organisms which are able to be cultured in the given growth medium.
 
 http://growthmedium.org/sparql
 
+## `gmid_predicate`
+```javascript
+({
+  json(params) {
+    if (params["gm_id"].startsWith("M")) {
+      return "dcterms:identifier";
+    } else {
+      return "skos:altLabel";
+    }
+  }
+})
+```
+
 ## `count` count results
 
 ```sparql
-PREFIX taxont: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-PREFIX taxid: <http://identifiers.org/taxonomy/>
-PREFIX taxncbi: <http://www.ncbi.nlm.nih.gov/taxonomy/>
-PREFIX taxup: <http://purl.uniprot.org/taxonomy/>
-PREFIX gm: <http://purl.jp/bio/10/gm/>
+DEFINE sql:select-option "order"
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
-SELECT (COUNT (DISTINCT ?org) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-FROM <http://kegg/taxonomy/>
+SELECT (COUNT (DISTINCT ?tax_id) AS ?total) ?limit ?offset
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://growthmedium.org/strain/2023>
+FROM <http://growthmedium.org/media/2023>
 WHERE {
-  ?gm dcterms:identifier "{{gm_id}}" .
-  ?gm gmo:GMO_000114 ?org .
-  ?org gmo:GMO_000020 ?t .
-  ?t dcterms:identifier ?taxid .
-  ?t taxont:scientificName ?name
-  BIND(str(?taxid) AS ?tax_id)
+  ?medium_id {{gmid_predicate}} "{{gm_id}}" ;
+    gmo:GMO_000114 ?culture_for ;
+    rdf:type  gmo:GMO_000001 . #exist media
+  ?culture_for gmo:strain_id ?strain .
+  ?strain rdf:type sio:SIO_010055 ;
+    gmo:taxon ?taxon_url ;
+    dcterms:identifier ?strain_id ;
+    rdfs:label ?strain_name ;
+    gmo:origin_strain/dcterms:identifier ?original_strain_name .
+  ?taxon_url ddbj-tax:scientificName ?name ;
+    dcterms:identifier ?tax_id  .
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
@@ -49,28 +65,31 @@ WHERE {
 ## `result` retrieve organism information
 
 ```sparql
-PREFIX taxont: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-PREFIX taxid: <http://identifiers.org/taxonomy/>
-PREFIX taxncbi: <http://www.ncbi.nlm.nih.gov/taxonomy/>
-PREFIX taxup: <http://purl.uniprot.org/taxonomy/>
-PREFIX gm: <http://purl.jp/bio/10/gm/>
+DEFINE sql:select-option "order"
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT ?tax_id ?name
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-FROM <http://kegg/taxonomy/>
-WHERE {
-  ?gm dcterms:identifier "{{gm_id}}" .
-  ?gm gmo:GMO_000114 ?org .
-  ?org gmo:GMO_000020 ?t .
-  ?t dcterms:identifier ?taxid .
-  ?t taxont:scientificName ?name
-  BIND(str(?taxid) AS ?tax_id)
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://growthmedium.org/strain/2023>
+FROM <http://growthmedium.org/media/2023>
+{
+  ?medium_id {{gmid_predicate}} "{{gm_id}}" ;
+    gmo:GMO_000114 ?culture_for ;
+    rdf:type  gmo:GMO_000001 . #exist media
+  ?culture_for gmo:strain_id ?strain .
+  ?strain rdf:type sio:SIO_010055 ;
+    gmo:taxon ?taxon_url ;
+    dcterms:identifier ?strain_id ;
+    rdfs:label ?strain_name ;
+    gmo:origin_strain/dcterms:identifier ?original_strain_name .
+  ?taxon_url ddbj-tax:scientificName ?name ;
+    dcterms:identifier ?tax_id  .
 }
 LIMIT {{limit}}
 OFFSET {{offset}}

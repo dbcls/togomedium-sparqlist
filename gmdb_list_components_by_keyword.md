@@ -28,8 +28,7 @@ SELECT (COUNT(DISTINCT ?gmo_id) AS ?total) ?limit ?offset
   (SAMPLE(?c) AS ?component)
   (SAMPLE(?l) AS ?label)
   (GROUP_CONCAT(?alt_label; SEPARATOR = ", ") AS ?alt_labels)
-FROM <http://growthmedium.org/gmo/>
-
+FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
   ?c rdfs:subClassOf+ gmo:GMO_000002 ;
      dcterms:identifier ?gmo_id ;
@@ -41,7 +40,7 @@ WHERE {
   }
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
-} 
+}
 ```
 
 ## `result` retrieve GMO component information
@@ -57,8 +56,7 @@ SELECT
   (SAMPLE(?c) AS ?component)
   (SAMPLE(?l) AS ?label)
   (GROUP_CONCAT(?alt_label; SEPARATOR = ", ") AS ?alt_labels)
-FROM <http://growthmedium.org/gmo/>
-
+FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
   ?c rdfs:subClassOf+ gmo:GMO_000002 ;
      dcterms:identifier ?gmo_id ;
