@@ -66,7 +66,8 @@ WHERE {
     rdf:type gmo:GMO_000001 ;
     dcterms:identifier ?media_id ;
     skos:altLabel ?original_media_id ;
-    rdfs:label ?media_name .
+    rdfs:label ?name .
+  BIND (if(STR(?name) = "", "(Unnamed medium)", ?name) AS ?media_name)
 }
 ```
 

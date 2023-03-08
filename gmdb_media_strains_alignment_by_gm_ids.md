@@ -38,7 +38,7 @@ WHERE {
   ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
     dcterms:identifier ?medium_id ;
     skos:altLabel ?original_media_id ;
-    rdfs:label ?medium_name ;
+    rdfs:label ?name ;
     gmo:GMO_000114/gmo:strain_id ?strain .
   ?strain a sio:SIO_010055 ;
     rdfs:label ?strain_name ;
@@ -48,6 +48,7 @@ WHERE {
     rdfs:subClassOf* ?ancestor_tax .
   ?ancestor_tax tax:rank  ?rank ;
     rdfs:label ?ancestor_tax_name .
+  BIND (if(STR(?name) = "", "(Unnamed medium)",  ?name) AS ?medium_name)
 } ORDER BY ?tax ?rank
 ```
 ## Output

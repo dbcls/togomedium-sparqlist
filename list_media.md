@@ -48,10 +48,11 @@ WHERE {
   ?medium_uri a gmo:GMO_000001 ;
     dcterms:identifier ?media_id ;
     skos:altLabel ?original_media_id ;
-    rdfs:label ?label .
+    rdfs:label ?media_name .
   OPTIONAL {
     ?medium_uri gmo:GMO_000108 ?source_uri .
   }
+  BIND (if(STR(?media_name) = "", "(Unnamed medium)", ?media_name) AS ?label)
 }
 LIMIT {{limit}}
 OFFSET {{offset}}

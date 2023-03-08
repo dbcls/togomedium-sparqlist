@@ -92,8 +92,9 @@ FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
 {{hieralcal_query_text}}
-  ?gm rdfs:label ?label ;
+  ?gm rdfs:label ?media_name ;
     skos:altLabel ?original_media_id .
+  BIND (if(STR(?media_name) = "", "(Unnamed medium)", ?media_name) AS ?label)
 }
 LIMIT {{limit}}
 OFFSET {{offset}}

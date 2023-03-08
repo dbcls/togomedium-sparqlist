@@ -82,8 +82,9 @@ WHERE {
   ?culture_for gmo:strain_id ?strain .
   ?medium_id gmo:GMO_000114 ?culture_for ;
     rdf:type gmo:GMO_000001 ; #exist media
-    rdfs:label ?medium_name ;
+    rdfs:label ?name ;
     skos:altLabel ?original_media_id .
+  BIND (if(STR(?name) = "", "(Unnamed medium)", ?name) AS ?medium_name)
 }
 LIMIT {{limit}}
 OFFSET {{offset}}

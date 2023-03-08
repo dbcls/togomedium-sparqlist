@@ -21,8 +21,8 @@ http://growthmedium.org/sparql
 PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX gmo:     <http://purl.jp/bio/10/gmo/> 
-PREFIX tm_id: <http://togomedium.org/medium/> 
+PREFIX gmo:     <http://purl.jp/bio/10/gmo/>
+PREFIX tm_id: <http://togomedium.org/medium/>
 
 SELECT (COUNT(?media_original_name) AS ?total) ?limit ?offset
 FROM <http://growthmedium.org/media/2023>
@@ -46,15 +46,15 @@ FROM <http://growthmedium.org/similarity>
 ```sparql
 PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX gmo:     <http://purl.jp/bio/10/gmo/> 
-PREFIX tm_id: <http://togomedium.org/medium/> 
+PREFIX gmo:     <http://purl.jp/bio/10/gmo/>
+PREFIX tm_id: <http://togomedium.org/medium/>
 
-SELECT  ?media
- (?media_original_name AS ?gm_id)
- (?media_original_name AS ?gm)
+SELECT ?media
+ (?medium_id AS ?gm_id)
  (?media_name AS ?gm_name)
- ?score 
+ ?score
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/similarity>
 {
@@ -64,7 +64,9 @@ FROM <http://growthmedium.org/similarity>
     rdf:value ?score .
   FILTER (?search_media != ?media )
   ?media skos:altLabel ?media_original_name ;
-    rdfs:label ?media_name .
+    dcterms:identifier ?medium_id ;
+    rdfs:label ?name .
+  BIND (if(STR(?name) = "", "(Unnamed medium)", ?name) AS ?media_name)
 } ORDER BY DESC(?score)
 LIMIT {{limit}}
 OFFSET {{offset}}
@@ -79,17 +81,17 @@ OFFSET {{offset}}
     let count_rows = count.results.bindings[0] ;
     let gms = {} ;
     gms.contents = [];
-    
+
     gms.total = 0;
     gms.limit = 0;
     gms.offset = 0;
-    
+
     if (rows.length == 0) {
       return gms;
     }
 
     for (let i = 0; i < rows.length; i++) {
-        gms.contents.push({gm_id: {label: rows[i].gm_id.value, href: "/medium/" + rows[i].gm_id.value}, 
+        gms.contents.push({gm_id: {label: rows[i].gm_id.value, href: "/medium/" + rows[i].gm_id.value},
                 name: rows[i].gm_name.value,
                 score: (Math.round(parseFloat(rows[i].score.value) * 1000))/10});
     }

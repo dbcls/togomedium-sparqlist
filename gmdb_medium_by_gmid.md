@@ -26,9 +26,13 @@ FROM <http://growthmedium.org/gmo/v0.24>
 {
   VALUES ?gm_no { "{{gm_id}}" }
   ?gm (dcterms:identifier | skos:altLabel) ?gm_no ;
-    skos:altLabel ?original_media_id ;
-    rdfs:label ?name ;
+    rdfs:label ?media_name ;
     gmo:GMO_000108 ?src_url .
+  OPTIONAL {
+    ?gm skos:altLabel ?original_media_id .
+    FILTER (strStarts(?original_media_id, "JCM") || strStarts(?original_media_id, "NBRC") )
+  }
+  BIND (if(STR(?media_name) = "", "(Unnamed medium)", ?media_name) AS ?name)
   OPTIONAL { ?gm gmo:ph ?ph }
 }
 ```

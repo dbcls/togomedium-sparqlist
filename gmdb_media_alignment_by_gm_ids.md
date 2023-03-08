@@ -46,7 +46,7 @@ WHERE {
   ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
     dcterms:identifier ?medium_id ;
     skos:altLabel ?original_media_id ;
-    rdfs:label ?medium_name .
+    rdfs:label ?name .
   ?medium olo:slot/olo:item ?paragraph .
   ?paragraph rdf:type gmo:Component .
   ?paragraph gmo:has_component ?component .
@@ -54,6 +54,7 @@ WHERE {
   ?component gmo:gmo_id ?gmo_id .
   ?gmo_id rdfs:label ?gmo_label .
   FILTER (lang(?gmo_label) = 'en')
+  BIND (if(STR(?name) = "", "(Unnamed medium)", ?name) AS ?medium_name)
 }
 ```
 
