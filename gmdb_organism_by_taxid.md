@@ -6,7 +6,7 @@ Show information of the organism with the given NCBI taxonomy ID.
 
 * `tax_id` NCBI taxID
   * default: 315405
-  * examples: 266117, 1209989, 543526, 315405, ...
+  * examples: 201174(phylum rank), 246196(strain rank), 266117, 1209989, 543526, 315405, ...
 
 ## Endpoint
 
@@ -20,14 +20,15 @@ PREFIX taxid: <http://identifiers.org/taxonomy/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
-SELECT DISTINCT  ?scientific_name ?taxid ?authority_name
+SELECT DISTINCT  ?scientific_name ?taxid ?rank ?authority_name
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 WHERE {
   VALUES ?tax_id { taxid:{{tax_id}} }
   ?tax_id a taxont:Taxon ;
     taxont:scientificName ?scientific_name;
-    dcterms:identifier ?taxid .
-    OPTIONAL { ?tax_id taxont:authority ?authority_name . }
+    dcterms:identifier ?taxid ;
+    taxont:rank ?rank .
+  OPTIONAL { ?tax_id taxont:authority ?authority_name . }
 }
 ```
 ## `type_material` retrieve organism information
@@ -96,7 +97,7 @@ WHERE {
     if (organism === null) {
       return null;
     }
-    const rank_list = ["superkingdom" , "phylum", "class", "order", "family", "genus"]
+    const rank_list = ["superkingdom" , "phylum", "class", "order", "family", "genus", "species"]
     let lineage_list = lineage.results.bindings.map((obj) => parseSparqlObject(obj));
     organism.lineage = [];
     rank_list.forEach((rank) => {
@@ -104,7 +105,7 @@ WHERE {
       if (rank_tax_list.length > 0) {
         organism.lineage.push(rank_tax_list[0]);
       } else {
-        organism.lineage.push({uri: "NA", taxid: "NA",  label: "NA", rank: "NA"});
+        organism.lineage.push({uri: "NA", taxid: "NA",  label: "NA", rank: rank});
       }
     });
     organism.type_material = [];
