@@ -6,7 +6,7 @@ Strain information with the given TogoMedium Strain ID.
 
 * `strain_id` TogoMedium strainID
   * default: S602
-  * examples: S36358(no link to tax), S39940(multiple other strains), ...
+  * examples: S36358(no link to tax), S39940(multiple other strains), S26316(missing family rank)...
 
 ## Endpoint
 
@@ -139,7 +139,7 @@ WHERE {
       if (rank_tax_list.length > 0) {
         organism.lineage.push(rank_tax_list[0]);
       } else {
-        organism.lineage.push({uri: "NA", taxid: "NA",  label: "NA", rank: "NA"});
+        organism.lineage.push({uri: "NA", taxid: "NA",  label: "NA", rank: rank});
       }
     });
     return {"strain": strain_info, "taxonomy": organism}
