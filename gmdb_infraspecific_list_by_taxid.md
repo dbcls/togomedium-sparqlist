@@ -117,7 +117,7 @@ OFFSET {{offset}}
       .map((r) => ({
         [KEY_ID]: {
           label: r.id,
-          href: `/taxon/${r.id}`,
+          href: `/organism/${r.id}`,
         },
         [KEY_RANK]: r.rank,
         [KEY_NAME]: r.name,
