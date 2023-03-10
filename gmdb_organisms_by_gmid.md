@@ -103,7 +103,7 @@ OFFSET {{offset}}
     for(let i = 0; i < rows.length; i++) {
       organisms.contents.push({
         tax_id: {label: rows[i].tax_id.value,
-                 href: "/organism/" + rows[i].tax_id.value},
+                 href: "/taxon/" + rows[i].tax_id.value},
         name: rows[i].name.value
       });
     }
