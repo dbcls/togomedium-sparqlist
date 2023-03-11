@@ -70,7 +70,7 @@ PREFIX sio: <http://semanticscience.org/resource/>
 SELECT DISTINCT ?medium_id ?tax ?tax_name
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/strain/2023>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 WHERE {
   VALUES ?medium_no { {{media_values}} }
   ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;

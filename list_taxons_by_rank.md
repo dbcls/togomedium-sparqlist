@@ -29,7 +29,7 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 
 SELECT  DISTINCT ?tax ?name
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/strain/2023>
 WHERE {

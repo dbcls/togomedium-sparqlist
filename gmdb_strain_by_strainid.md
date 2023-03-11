@@ -46,7 +46,7 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT  ?scientific_name ?taxid ?rank ?authority_name
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/strain/2023>
 WHERE {
   VALUES ?search_strain_id { "{{strain_id}}" }
@@ -72,7 +72,7 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT ?uri ?taxid ?label ?rank
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/strain/2023>
 WHERE {
   VALUES ?search_strain_id { "{{strain_id}}" }

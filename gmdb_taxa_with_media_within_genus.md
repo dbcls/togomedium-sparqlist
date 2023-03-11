@@ -36,7 +36,7 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT ?tax_ids COUNT(?medium_id) AS ?media_count
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://growthmedium.org/media/2023>
 WHERE {

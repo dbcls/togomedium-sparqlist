@@ -40,7 +40,7 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 SELECT
   (COUNT(DISTINCT ?tax_id) AS ?total) ?limit ?offset
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/strain/2023>
 WHERE {
@@ -76,7 +76,7 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 SELECT ?tax_id ?taxon_url ?tax_name ?rank_label
   (GROUP_CONCAT(?auth; SEPARATOR = ", ") AS ?authority)
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/strain/2023>
 WHERE {

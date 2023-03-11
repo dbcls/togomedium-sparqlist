@@ -28,7 +28,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 SELECT (COUNT(DISTINCT ?medium) AS ?total) ?limit ?offset
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/strain/2023>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 WHERE {
   VALUES ?search_tax { taxid:{{tax_id}} }
   ?search_tax rdf:type ddbj-tax:Taxon .
@@ -59,7 +59,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 SELECT DISTINCT ?media_id ?original_media_id ?label
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/strain/2023>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 WHERE {
   VALUES ?search_tax { taxid:{{tax_id}} }
   ?search_tax rdf:type ddbj-tax:Taxon .

@@ -24,7 +24,7 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT ?phylum ?phylum_id ?phylum_label ?limit ?offset (COUNT(DISTINCT ?medium_uri) AS ?media)
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://growthmedium.org/media/2023>
 {
