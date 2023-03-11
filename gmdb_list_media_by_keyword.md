@@ -130,7 +130,7 @@ OFFSET {{offset}}
     contents = gms_with_taxonomy.concat(gms_wo_taxonomy);
     gms.contents = contents;
     gms.columns = [];
-    gms.columns.push({key: "media_id", label: "GM ID"});
+    gms.columns.push({key: "media_id", label: "Medium"});
     gms.columns.push({key: "name", label: "Name"});
     gms.columns.push({key: "organism_names", label: "Organism names"});
     gms.total = count_rows.total.value ;

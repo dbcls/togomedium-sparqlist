@@ -83,7 +83,7 @@ OFFSET {{offset}}
     const KEY_ORGINAL_GM_ID = "original_media_id";
     const KEY_Label= "label";
     const columns = [
-      {key: KEY_GM_ID, label: "GM ID"},
+      {key: KEY_GM_ID, label: "Medium"},
       {key: KEY_ORGINAL_GM_ID, label: "Original Media ID"},
       {key: KEY_Label, label: "Name"},
     ];

@@ -110,7 +110,7 @@ OFFSET {{offset}}
     }
     
     media.columns = [];
-    media.columns.push({key: "gm_id", label: "GM ID"});
+    media.columns.push({key: "gm_id", label: "Medium"});
     media.columns.push({key: "name", label: "Name"});
     media.total = count_rows.total.value ;
     media.limit = count_rows.limit.value ;

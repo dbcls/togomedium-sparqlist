@@ -99,7 +99,7 @@ WHERE {
     }
 
     gms.columns = [];
-    gms.columns.push({key: "media_id", label: "GM ID"});
+    gms.columns.push({key: "media_id", label: "Medium"});
     gms.columns.push({key: "original_media_id", label: "Original Media ID"});
     gms.columns.push({key: "media_name", label: "Name"});
     gms.total = count_rows.total.value;

@@ -96,7 +96,7 @@ OFFSET {{offset}}
                 score: (Math.round(parseFloat(rows[i].score.value) * 1000))/10});
     }
     gms.columns = [];
-    gms.columns.push({key: "gm_id", label: "GM ID"});
+    gms.columns.push({key: "gm_id", label: "Medium"});
     gms.columns.push({key: "name", label: "Name"});
     gms.columns.push({key: "score", label: "Score"});
     gms.total = count_rows.total.value;
