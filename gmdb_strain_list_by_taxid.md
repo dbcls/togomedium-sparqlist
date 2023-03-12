@@ -113,7 +113,7 @@ OFFSET {{offset}}
       .map((r) => ({
         [KEY_ID]: {
           label: r.strain_id,
-          href: `/organism/${r.strain_id}`,
+          href: `/strain/${r.strain_id}`,
         },
         [KEY_NAME]: r.strain_name,
         [KEY_OTHER_IDS]: r.original_strain_ids,
