@@ -5,7 +5,8 @@ Retrieve growth media similar to the growth media given as an argument.
 ## Parameters
 
 * `gm_id` GMO ID
-  * default: JCM_M25
+  * default: M18
+  * examples: JCM_M25
 * `limit` limit
   * default: 10
 * `offset` offset
@@ -20,15 +21,16 @@ http://growthmedium.org/sparql
 ```sparql
 PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX gmo:     <http://purl.jp/bio/10/gmo/>
-PREFIX tm_id: <http://togomedium.org/medium/>
 
 SELECT (COUNT(?media_original_name) AS ?total) ?limit ?offset
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/similarity>
 {
-  ?search_media skos:altLabel "{{gm_id}}" .
+  VALUES ?medium_no { "{{gm_id}}" }
+  ?search_media (dcterms:identifier | skos:altLabel) ?medium_no .
   ?blank gmo:GMO_000115 ?search_media ;
     gmo:GMO_000115 ?media ;
     rdf:value ?score .
@@ -49,7 +51,6 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX gmo:     <http://purl.jp/bio/10/gmo/>
-PREFIX tm_id: <http://togomedium.org/medium/>
 
 SELECT ?media
  (?medium_id AS ?gm_id)
@@ -58,7 +59,8 @@ SELECT ?media
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/similarity>
 {
-  ?search_media skos:altLabel "{{gm_id}}" .
+  VALUES ?medium_no { "{{gm_id}}" }
+  ?search_media (dcterms:identifier | skos:altLabel) ?medium_no .
   ?blank gmo:GMO_000115 ?search_media ;
     gmo:GMO_000115 ?media ;
     rdf:value ?score .
