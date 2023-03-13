@@ -50,7 +50,7 @@ PREFIX olo:     <http://purl.org/ontology/olo/core#>
 PREFIX sio:     <http://semanticscience.org/resource/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-SELECT ?paragraph_index ?subcomponent_name ?component_name ?volume ?unit ?conc_value ?conc_unit ?gmo ?gmo_id ?label ?property_id ?property ?property_label ?role_id ?role ?role_label
+SELECT ?paragraph_index ?subcomponent_name ?component_name ?volume ?unit ?conc_value ?conc_unit ?gmo ?gmo_id ?label ?property_id ?property ?property_label ?role_id ?role ?role_label ?reference_media_id
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/gmo/v0.24>
 FROM <http://growthmedium.org/uo>
@@ -90,6 +90,10 @@ FROM <http://growthmedium.org/uo>
       ?role dcterms:identifier ?role_id
       FILTER(LANG(?role_label) = "en")
     }
+  }
+  OPTIONAL {
+    ?component gmo:reference ?reference_paragraph .
+    BIND (replace(replace(str(?reference_paragraph), "_[0-9]+$", ""), "http://togomedium.org/medium/", "") AS ?reference_media_id)
   }
 } ORDER BY ?paragraph_index
 ```
