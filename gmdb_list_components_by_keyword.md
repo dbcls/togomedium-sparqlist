@@ -24,19 +24,17 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
-SELECT (COUNT(DISTINCT ?gmo_id) AS ?total) ?limit ?offset
-  (SAMPLE(?c) AS ?component)
-  (SAMPLE(?l) AS ?label)
-  (GROUP_CONCAT(?alt_label; SEPARATOR = ", ") AS ?alt_labels)
+SELECT (COUNT(DISTINCT ?component) AS ?total) ?limit ?offset
 FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
-  ?c rdfs:subClassOf+ gmo:GMO_000002 ;
-     dcterms:identifier ?gmo_id ;
-     skos:prefLabel ?l
-  FILTER(REGEX(?l, "{{keyword}}", "i"))
+  ?component rdfs:subClassOf+ gmo:GMO_000002 ;
+    dcterms:identifier ?gmo_id ;
+    skos:prefLabel ?pref_label ;
+    (skos:prefLabel | skos:altLabel | rdfs:label) ?label .
+  FILTER(REGEX(?label, "{{keyword}}", "i"))
   OPTIONAL {
-     ?c skos:altLabel ?alt_label
-     FILTER(LANG(?alt_label) = "en" && REGEX(?alt_label, "{{keyword}}", "i"))
+    ?component skos:altLabel ?alt_label .
+    FILTER(lang(?alt_label) = "en")
   }
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
@@ -52,22 +50,21 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT
-  ?gmo_id
-  (SAMPLE(?c) AS ?component)
-  (SAMPLE(?l) AS ?label)
-  (GROUP_CONCAT(?alt_label; SEPARATOR = ", ") AS ?alt_labels)
+  ?gmo_id ?component ?pref_label
+  (GROUP_CONCAT(DISTINCT ?alt_label; SEPARATOR = ", ") AS ?alt_labels)
 FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
-  ?c rdfs:subClassOf+ gmo:GMO_000002 ;
-     dcterms:identifier ?gmo_id ;
-     skos:prefLabel ?l
-  FILTER(REGEX(?l, "{{keyword}}", "i"))
+  ?component rdfs:subClassOf+ gmo:GMO_000002 ;
+    dcterms:identifier ?gmo_id ;
+    skos:prefLabel ?pref_label ;
+    (skos:prefLabel | skos:altLabel | rdfs:label) ?label .
+  FILTER(REGEX(?label, "{{keyword}}", "i"))
   OPTIONAL {
-     ?c skos:altLabel ?alt_label
-     FILTER(LANG(?alt_label) = "en" && REGEX(?alt_label, "{{keyword}}", "i"))
+    ?component skos:altLabel ?alt_label .
+    FILTER(lang(?alt_label) = "en")
   }
 }
-GROUP BY ?gmo_id
+GROUP BY ?gmo_id ?component ?pref_label
 LIMIT {{limit}}
 OFFSET {{offset}}
 ```
@@ -95,13 +92,13 @@ OFFSET {{offset}}
         components.contents.push({
           gmo_id: {label: rows[i].gmo_id.value,
                    href: "/component/" + rows[i].gmo_id.value},
-          name: rows[i].label.value + "; " + rows[i].alt_labels.value
+          name: rows[i].pref_label.value + "; " + rows[i].alt_labels.value
         });
       } else {
         components.contents.push({
           gmo_id: {label: rows[i].gmo_id.value,
                    href: "/component/" + rows[i].gmo_id.value},
-          name: rows[i].label.value
+          name: rows[i].pref_label.value
         });
       }
     }
