@@ -117,7 +117,7 @@ OFFSET {{offset}}
     strains.columns.push({key: "strain_id", label: "Strain ID"});
     strains.columns.push({key: "name", label: "Name"});
     strains.columns.push({key: "other_ids", label: "Other IDs"});
-    strains.columns.push({key: "taxonomy", label: "Taxonomy"});
+    strains.columns.push({key: "taxonomy", label: "Species"});
     strains.total = count_rows.total.value ;
     strains.limit = count_rows.limit.value ;
     strains.offset = count_rows.offset.value ;
