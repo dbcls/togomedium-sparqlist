@@ -40,6 +40,7 @@ PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?medium_id ?original_media_id ?medium_name ?gmo_id
 FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/media/components>
 FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
   VALUES ?medium_no { {{media_values}} }
@@ -47,11 +48,7 @@ WHERE {
     dcterms:identifier ?medium_id ;
     skos:altLabel ?original_media_id ;
     rdfs:label ?name .
-  ?medium olo:slot/olo:item ?paragraph .
-  ?paragraph rdf:type gmo:Component .
-  ?paragraph gmo:has_component ?component .
-  ?component  rdfs:label ?component_label .
-  ?component gmo:gmo_id ?gmo_id .
+  ?medium gmo:included_component ?gmo_id .
   ?gmo_id rdfs:label ?gmo_label .
   FILTER (lang(?gmo_label) = 'en')
   BIND (if(STR(?name) = "", "(Unnamed medium)", ?name) AS ?medium_name)
@@ -92,17 +89,14 @@ PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?ancestor_gmo_id ?ancestor_gmo_label ?parent_gmo_id ?disp_order ?category_name
 FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/media/components>
 FROM <http://growthmedium.org/gmo/v0.24>
 FROM <http://growthmedium.org/gmo/v0.24/display_order>
 WHERE {
   VALUES ?medium_no  { {{media_values}} }
   ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
     rdfs:label ?medium_name .
-  ?medium olo:slot/olo:item ?paragraph .
-  ?paragraph rdf:type gmo:Component ;
-    gmo:has_component ?component .
-  ?component  rdfs:label ?component_label ;
-    gmo:gmo_id ?gmo_id .
+  ?medium gmo:included_component ?gmo_id .
   ?gmo_id rdfs:subClassOf* ?ancestor_gmo_id .
    ?ancestor_gmo_id rdfs:label ?ancestor_gmo_label .
    FILTER (lang(?ancestor_gmo_label) = 'en')
