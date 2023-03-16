@@ -36,15 +36,19 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
-SELECT DISTINCT ?gmo_id ?name
+SELECT DISTINCT ?gmo_id ?name COALESCE(?label_ja, "") AS ?name_ja
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
   {{gmo_subquery_text}}
- ?medium dcterms:identifier ?media_id .
- ?medium olo:slot/olo:item/gmo:has_component/gmo:gmo_id ?gmo_id .
- ?gmo_id rdfs:label ?name .
- FILTER (lang(?name) = 'en' || lang(?name) = 'ja')
+  ?medium dcterms:identifier ?media_id .
+  ?medium olo:slot/olo:item/gmo:has_component/gmo:gmo_id ?gmo_id .
+  ?gmo_id rdfs:label ?name .
+  FILTER (lang(?name) = 'en')
+  OPTIONAL {
+    ?gmo_id rdfs:label ?label_ja .
+    FILTER (lang(?label_ja) = 'ja')
+  }
 } ORDER BY ?name
 ```
 
@@ -54,7 +58,11 @@ WHERE {
 ({
   json({result}) {
 	return result.results.bindings.map((item) => {
-      return {"gmo_id": item.gmo_id.value.split("/").pop(), "name": item.name.value }
+      return {
+        "gmo_id": item.gmo_id.value.split("/").pop(),
+        "name": item.name.value,
+        "japanese_name": item.name_ja.value
+      }
     });
   }
 })
