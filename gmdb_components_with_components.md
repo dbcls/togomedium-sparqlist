@@ -44,7 +44,7 @@ WHERE {
  ?medium dcterms:identifier ?media_id .
  ?medium olo:slot/olo:item/gmo:has_component/gmo:gmo_id ?gmo_id .
  ?gmo_id rdfs:label ?name .
- FILTER (lang(?name) = 'en')
+ FILTER (lang(?name) = 'en' || lang(?name) = 'ja')
 } ORDER BY ?name
 ```
 
