@@ -100,7 +100,7 @@ WHERE {
 
     gms.columns = [];
     gms.columns.push({key: "media_id", label: "Medium"});
-    gms.columns.push({key: "original_media_id", label: "Information source medium"});
+    gms.columns.push({key: "original_media_id", label: "Information source"});
     gms.columns.push({key: "media_name", label: "Name"});
     gms.total = count_rows.total.value;
     gms.limit = count_rows.limit.value;

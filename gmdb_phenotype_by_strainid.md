@@ -84,7 +84,7 @@ WHERE {
 ```javascript
 ({
   json({result, count}) {
-     let header =   [{key: "source", label: "Source"}, {key: "property", label: ""}, {key: "value", label: "Phenotype"} ];
+     let header =   [{key: "property", label: "Phenotype"}, {key: "value", label: "Value"}, {key: "source", label: "Source"} ];
      if (result.results.bindings.length == 0) {
        return {"total": 0, "limit": 0, "offset": 0, "contents": [], "columns": headers};
      }
@@ -96,7 +96,10 @@ WHERE {
        "columns": header
     }
     ret["contents"] = result.results.bindings.map((item) => {
-      let phenotype_data = { "source": { "label": item.source_label.value, "href":  item.source_uri.value}, "property": item.property_label.value }
+      let phenotype_data = {
+        "source": { "label": item.source_label.value, "href":  item.source_uri.value},
+        "property": item.property_label.value
+      }
       if (item.value_type) {
         phenotype_data["value"] = item.value_label.value;
       } else {

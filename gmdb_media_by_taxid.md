@@ -103,7 +103,7 @@ OFFSET {{offset}}
     const KEY_NAME = "name";
     const columns = [
       {key: KEY_GM_ID, label: "Medium"},
-      {key: KEY_ORGINAL_GM_ID, label: "Information source medium"},
+      {key: KEY_ORGINAL_GM_ID, label: "Information source"},
       {key: KEY_NAME, label: "Name"},
     ];
     const contents = result.results.bindings
