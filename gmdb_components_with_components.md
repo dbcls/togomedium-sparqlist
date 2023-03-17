@@ -36,7 +36,8 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
-SELECT DISTINCT ?gmo_id ?name COALESCE(?label_ja, "") AS ?name_ja
+SELECT DISTINCT ?gmo_id ?name
+ (GROUP_CONCAT(DISTINCT ?label_ja; SEPARATOR = ", ") AS ?name_ja)
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
@@ -49,7 +50,9 @@ WHERE {
     ?gmo_id rdfs:label ?label_ja .
     FILTER (lang(?label_ja) = 'ja')
   }
-} ORDER BY ?name
+}
+GROUP BY ?gmo_id ?name
+ORDER BY ?name
 ```
 
 ## Output
