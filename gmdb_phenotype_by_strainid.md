@@ -96,8 +96,12 @@ WHERE {
        "columns": header
     }
     ret["contents"] = result.results.bindings.map((item) => {
+      let source_data = { "label": item.source_label.value, "href":  item.source_uri.value};
+      if (!item.source_uri || item.source_uri.value == "https://growthmedium.org/") { //invalid url
+        source_data = item.source_label.value
+      }
       let phenotype_data = {
-        "source": { "label": item.source_label.value, "href":  item.source_uri.value},
+        "source": source_data,
         "property": item.property_label.value
       }
       if (item.value_type) {
