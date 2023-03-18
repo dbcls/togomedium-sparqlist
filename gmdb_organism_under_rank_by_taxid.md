@@ -12,7 +12,7 @@
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `ranks`
 ```sparql

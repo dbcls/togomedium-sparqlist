@@ -13,7 +13,7 @@ fraspecific
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count`
 

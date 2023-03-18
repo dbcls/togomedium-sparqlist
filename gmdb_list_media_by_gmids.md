@@ -15,7 +15,7 @@ Show a list of growth media with the given GM ID(s).
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `media_values`
 ```javascript

@@ -14,7 +14,7 @@ Retrieve strains which are able to be cultured in the given growth medium.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count results
 

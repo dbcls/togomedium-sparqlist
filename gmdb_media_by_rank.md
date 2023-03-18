@@ -14,7 +14,7 @@ List growth media used for organisms that belongs to the lower taxonomy rank of 
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count results
 

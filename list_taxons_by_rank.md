@@ -13,7 +13,7 @@
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `result`
 

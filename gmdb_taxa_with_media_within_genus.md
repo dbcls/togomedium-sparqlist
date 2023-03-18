@@ -9,7 +9,7 @@ Retrieve tax_ids with media within genus.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `tax_values`
 ```javascript

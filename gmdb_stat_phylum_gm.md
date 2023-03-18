@@ -11,7 +11,7 @@ Get statistics of the number of growth medium by phylum
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `result` retrieve media information
 

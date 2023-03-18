@@ -10,7 +10,7 @@ Show information of the taxonomic rank with the given NCBI taxonomy ID.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `result` retrieve organism information
 

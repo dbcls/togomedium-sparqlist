@@ -14,7 +14,7 @@ List growth media used for strains(s) with the given TogoMedium Strain ID.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count results
 

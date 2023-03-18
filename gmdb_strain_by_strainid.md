@@ -10,7 +10,7 @@ Strain information with the given TogoMedium Strain ID.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 
 

@@ -14,7 +14,7 @@ Show a list of growth media components with the given GMO ID(s).
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `gmo_id_ary` Parse_argument
 ```javascript

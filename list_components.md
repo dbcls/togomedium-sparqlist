@@ -11,7 +11,7 @@ Show a list of growth media components.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count the number of components in TogoMedium
 

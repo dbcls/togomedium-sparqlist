@@ -14,7 +14,7 @@ Show a list of organisms with the given tax ID(s).
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `tax_id_ary` Parse_argument
 ```javascript

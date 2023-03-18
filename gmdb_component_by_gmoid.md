@@ -10,7 +10,7 @@ Retrieve information of component with the given GMO id.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `result` retrieve GMO component information
 

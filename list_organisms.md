@@ -11,7 +11,7 @@ Show a list of organisms in TogoMedium.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count number of all organisms in TogoMedium
 

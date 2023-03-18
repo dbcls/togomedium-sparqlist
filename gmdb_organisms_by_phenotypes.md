@@ -31,7 +31,7 @@ Retrieve organism by phenotype
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `temp_query_txt`
 ```javascript

@@ -12,7 +12,7 @@ Show a list of growth media in TogoMedium.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count total number of growth media
 

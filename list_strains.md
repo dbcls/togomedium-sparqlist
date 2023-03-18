@@ -11,7 +11,7 @@ Show a list of strains in TogoMedium.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count number of all strains in TogoMedium
 

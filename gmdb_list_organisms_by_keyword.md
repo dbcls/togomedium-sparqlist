@@ -15,7 +15,7 @@ Show a list of organisms with the given keyword.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count results
 

@@ -14,7 +14,7 @@ Show a list of growth media components with the given keyword.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` retrieve GMO component information
 

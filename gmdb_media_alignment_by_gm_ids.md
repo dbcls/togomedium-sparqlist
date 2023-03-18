@@ -8,7 +8,7 @@ Retrieve component list for media alignment view
   * default: SY4047,JCM_M900
 
 ## Endpoint
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `media_values`
 ```javascript

@@ -14,7 +14,7 @@ Retrieve growth media including a component with the given GMO ID.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count results
 

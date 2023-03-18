@@ -14,7 +14,7 @@ Retrieve growth media similar to the growth media given as an argument.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count results
 

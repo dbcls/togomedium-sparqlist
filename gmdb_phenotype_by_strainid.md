@@ -11,7 +11,7 @@
 
  ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count results
 ```sparql

@@ -8,7 +8,7 @@
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `children_list`
 

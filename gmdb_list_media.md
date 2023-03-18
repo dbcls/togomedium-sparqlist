@@ -11,7 +11,7 @@ Show a list of growth media with the given keyword.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count results
 

@@ -15,7 +15,7 @@ If the hierarchical hit contains even one component, `exact-match` will return f
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `exact_query_text` query params
 

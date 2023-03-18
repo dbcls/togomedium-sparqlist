@@ -3,7 +3,7 @@ Show all list of growth media component names.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `all_component_list` retrieve GMO component information
 
