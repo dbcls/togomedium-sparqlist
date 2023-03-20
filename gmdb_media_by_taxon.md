@@ -13,7 +13,7 @@ Retrieve growth media including a component with the given GMO ID.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `tax_values`
 ```javascript
@@ -29,18 +29,18 @@ http://growthmedium.org/sparql
 ## `count` count results
 ```sparql
 DEFINE sql:select-option "order"
-PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(DISTINCT ?medium_id) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/strain>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
-FROM <http://growthmedium.org/media/20210316>
+FROM <http://growthmedium.org/strain/2023>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
+FROM <http://growthmedium.org/media/2023>
 WHERE {
   VALUES ?tax_ids { {{tax_values}} }
   ?tax_ids rdf:type ddbj-tax:Taxon .
@@ -49,8 +49,9 @@ WHERE {
     rdf:type sio:SIO_010055 .
   ?culture_for gmo:strain_id ?strain .
   ?medium_id gmo:GMO_000114 ?culture_for ;
-    rdf:type gmo:GMO_00001 ; #exist media
-   rdfs:label ?media_name .
+    rdf:type gmo:GMO_000001 ; #exist media
+    rdfs:label ?media_name ;
+    skos:altLabel ?original_media_id .
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
@@ -60,18 +61,18 @@ WHERE {
 
 ```sparql
 DEFINE sql:select-option "order"
-PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
-SELECT DISTINCT ?medium_id ?medium_name
-FROM <http://growthmedium.org/strain>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
-FROM <http://growthmedium.org/media/20210316>
+SELECT DISTINCT ?medium_id ?medium_name ?original_media_id
+FROM <http://growthmedium.org/strain/2023>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
+FROM <http://growthmedium.org/media/2023>
 WHERE {
   VALUES ?tax_ids { {{tax_values}} }
   ?tax_ids rdf:type ddbj-tax:Taxon .
@@ -80,8 +81,10 @@ WHERE {
     rdf:type sio:SIO_010055 .
   ?culture_for gmo:strain_id ?strain .
   ?medium_id gmo:GMO_000114 ?culture_for ;
-    rdf:type gmo:GMO_00001 ; #exist media
-   rdfs:label ?medium_name .
+    rdf:type gmo:GMO_000001 ; #exist media
+    rdfs:label ?name ;
+    skos:altLabel ?original_media_id .
+  BIND (if(STR(?name) = "", "(Unnamed medium)", ?name) AS ?medium_name)
 }
 LIMIT {{limit}}
 OFFSET {{offset}}
@@ -100,7 +103,7 @@ OFFSET {{offset}}
     let rows = result.results.bindings;
     let contents = rows.map((row) => {
       let medium_id = row["medium_id"]["value"].split("/").pop();
-      return {"gm_id": medium_id, "name": row["medium_name"]["value"]};
+      return {"gm_id": medium_id, "name": row["medium_name"]["value"], "original_media_id": row["original_media_id"]["value"]};
     });
     return {"total": total, "offset": offset, "limit": limit, "contents": contents};
   }

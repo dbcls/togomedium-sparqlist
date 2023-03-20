@@ -4,10 +4,11 @@ Retrieve component list for media alignment view
 
 ## Parameters
 * `gm_ids` list of medium id
+  * default: M941,M2794
   * default: SY4047,JCM_M900
 
 ## Endpoint
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `media_values`
 ```javascript
@@ -34,22 +35,23 @@ http://growthmedium.org/sparql
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
-SELECT DISTINCT ?medium_id ?medium_name ?gmo_id
-FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+SELECT DISTINCT ?medium_id ?original_media_id ?medium_name ?gmo_id
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/media/components>
+FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
-  VALUES ?medium_id { {{media_values}} }
-  ?medium dcterms:identifier ?medium_id ;
-    rdfs:label ?medium_name .
-  ?medium olo:slot/olo:item ?paragraph .
-  ?paragraph rdf:type gmo:Component .
-  ?paragraph gmo:has_component ?component .
-  ?component  rdfs:label ?component_label .
-  ?component gmo:gmo_id ?gmo_id .
+  VALUES ?medium_no { {{media_values}} }
+  ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
+    dcterms:identifier ?medium_id ;
+    skos:altLabel ?original_media_id ;
+    rdfs:label ?name .
+  ?medium gmo:included_component ?gmo_id .
   ?gmo_id rdfs:label ?gmo_label .
   FILTER (lang(?gmo_label) = 'en')
+  BIND (if(STR(?name) = "", "(Unnamed medium)", ?name) AS ?medium_name)
 }
 ```
 
@@ -58,16 +60,18 @@ WHERE {
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 PREFIX sio: <http://semanticscience.org/resource/>
 
 SELECT DISTINCT ?medium_id ?tax ?tax_name
-FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/strain>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/strain/2023>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 WHERE {
-  VALUES ?medium_id { {{media_values}} }
-  ?medium dcterms:identifier ?medium_id ;
+  VALUES ?medium_no { {{media_values}} }
+  ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
+    dcterms:identifier ?medium_id ;
     gmo:GMO_000114/gmo:strain_id ?strain .
   ?strain a sio:SIO_010055 ;
     gmo:taxon ?tax .
@@ -80,27 +84,25 @@ WHERE {
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?ancestor_gmo_id ?ancestor_gmo_label ?parent_gmo_id ?disp_order ?category_name
-FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
-FROM <http://growthmedium.org/gmo/v0.23/display_order>
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/media/components>
+FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://growthmedium.org/gmo/v0.24/display_order>
 WHERE {
-  VALUES ?medium_id  { {{media_values}} }
-  ?medium dcterms:identifier ?medium_id ;
+  VALUES ?medium_no  { {{media_values}} }
+  ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
     rdfs:label ?medium_name .
-  ?medium olo:slot/olo:item ?paragraph .
-  ?paragraph rdf:type gmo:Component ;
-    gmo:has_component ?component .
-  ?component  rdfs:label ?component_label ;
-    gmo:gmo_id ?gmo_id .
+  ?medium gmo:included_component ?gmo_id .
   ?gmo_id rdfs:subClassOf* ?ancestor_gmo_id .
    ?ancestor_gmo_id rdfs:label ?ancestor_gmo_label .
    FILTER (lang(?ancestor_gmo_label) = 'en')
   ?ancestor_gmo_id rdfs:subClassOf ?parent_gmo_id ;
-      gmo:display_order ?disp_order ;
-      gmo:category ?category_name .
+    gmo:display_order ?disp_order ;
+    gmo:category ?category_name .
 } ORDER BY ?disp_order
 ```
 
@@ -124,6 +126,7 @@ WHERE {
       let media_name = "";
       let hit_media = medium_component_list.find((row) => row["medium_id"]["value"] == medium_id);
       media_info["name"] = hit_media["medium_name"]["value"];
+      media_info["original_media_id"] = hit_media["original_media_id"]["value"];
       medium_component_list.forEach((row) => {
         if (row["medium_id"]["value"] == medium_id) {
           component_list.push(row["gmo_id"]["value"].split("/").pop());

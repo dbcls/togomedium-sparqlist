@@ -10,7 +10,7 @@ Show information of the organism with the given NCBI taxonomy ID.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `tax_name` retrieve organism information
 

@@ -8,7 +8,7 @@
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `children_list`
 
@@ -22,7 +22,7 @@ PREFIX taxo: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 
 SELECT  DISTINCT ?tax ?name ?rank
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 WHERE {
   VALUES ?search_tax_id { taxid:{{tax_id}} }
   ?search_tax_id rdf:type taxo:Taxon .
@@ -39,11 +39,11 @@ WHERE {
 ({
   json({children_list}) {
     let list = children_list.results.bindings;
-    return list.map((row) => { 
+    return list.map((row) => {
       let tax_id = row["tax"]["value"].split("/").pop();
       let rank = row["rank"]["value"].split("/").pop();
       return {"tax_id": tax_id, "name": row["name"]["value"], "rank": rank}
-    });    
+    });
   }
 })
 ```

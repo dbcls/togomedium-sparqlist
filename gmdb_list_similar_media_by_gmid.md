@@ -5,8 +5,8 @@ Retrieve growth media similar to the growth media given as an argument.
 ## Parameters
 
 * `gm_id` GMO ID
-  * default: JCM_M25
-  * examples: SY46,HM_D00205,NBRC_M5
+  * default: M18
+  * examples: JCM_M25
 * `limit` limit
   * default: 10
 * `offset` offset
@@ -14,27 +14,29 @@ Retrieve growth media similar to the growth media given as an argument.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count results
 
 ```sparql
-PREFIX gmo: <http://purl.jp/bio/10/gmo/>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX gmo:     <http://purl.jp/bio/10/gmo/>
 
-SELECT (COUNT(?gm) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/media/cluster/200/>
-FROM <http://growthmedium.org/media/>
-WHERE {
-  VALUES (?query_gm ?score) { (<http://purl.jp/bio/10/gm/{{gm_id}}> "100") } .
-  ?cluster rdfs:seeAlso ?query_gm ;
-           rdfs:seeAlso ?gm .
-  ?gm dcterms:identifier ?gm_id .
-  OPTIONAL {
-    ?gm rdfs:label|gmo:GMO_000102 ?gm_name .
-  }
+SELECT (COUNT(?media_original_name) AS ?total) ?limit ?offset
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/similarity>
+{
+  VALUES ?medium_no { "{{gm_id}}" }
+  ?search_media (dcterms:identifier | skos:altLabel) ?medium_no .
+  ?blank gmo:GMO_000115 ?search_media ;
+    gmo:GMO_000115 ?media ;
+    rdf:value ?score .
+  FILTER (?search_media != ?media )
+  ?media skos:altLabel ?media_original_name ;
+    rdfs:label ?media_name .
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
@@ -44,24 +46,30 @@ WHERE {
 ## `result` retrieve GMO component information
 
 ```sparql
-PREFIX gmo: <http://purl.jp/bio/10/gmo/>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX gmo:     <http://purl.jp/bio/10/gmo/>
 
-SELECT DISTINCT ?gm_id ?gm ?gm_name ?score
-FROM <http://growthmedium.org/media/cluster/200/>
-FROM <http://growthmedium.org/media/>
-WHERE {
-  VALUES (?query_gm ?score) { (<http://purl.jp/bio/10/gm/{{gm_id}}> "100") } .
-  ?cluster rdfs:seeAlso ?query_gm ;
-           rdfs:seeAlso ?gm .
-  ?gm dcterms:identifier ?gm_id .
-  OPTIONAL {
-    ?gm rdfs:label|gmo:GMO_000102 ?gm_name .
-  }
-}
-ORDER BY ?gm_id
+SELECT ?media
+ (?medium_id AS ?gm_id)
+ (?media_name AS ?gm_name)
+ ?score
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/similarity>
+{
+  VALUES ?medium_no { "{{gm_id}}" }
+  ?search_media (dcterms:identifier | skos:altLabel) ?medium_no .
+  ?blank gmo:GMO_000115 ?search_media ;
+    gmo:GMO_000115 ?media ;
+    rdf:value ?score .
+  FILTER (?search_media != ?media )
+  ?media skos:altLabel ?media_original_name ;
+    dcterms:identifier ?medium_id ;
+    rdfs:label ?name .
+  BIND (if(STR(?name) = "", "(Unnamed medium)", ?name) AS ?media_name)
+} ORDER BY DESC(?score)
 LIMIT {{limit}}
 OFFSET {{offset}}
 ```
@@ -75,28 +83,22 @@ OFFSET {{offset}}
     let count_rows = count.results.bindings[0] ;
     let gms = {} ;
     gms.contents = [];
-    
+
     gms.total = 0;
     gms.limit = 0;
     gms.offset = 0;
-    
+
     if (rows.length == 0) {
       return gms;
     }
 
     for (let i = 0; i < rows.length; i++) {
-       if (rows[i].gm_name) {
-         gms.contents.push({gm_id: {label: rows[i].gm_id.value, href: "/medium/" + rows[i].gm_id.value}, 
-                            name: rows[i].gm_name.value,
-                            score: rows[i].score.value});
-       } else {
-         gms.contents.push({gm_id: {label: rows[i].gm_id.value, href: "/medium/" + rows[i].gm_id.value},
-                            name: "",
-                            score: rows[i].score.value});
-       }
+        gms.contents.push({gm_id: {label: rows[i].gm_id.value, href: "/medium/" + rows[i].gm_id.value},
+                name: rows[i].gm_name.value,
+                score: (Math.round(parseFloat(rows[i].score.value) * 1000))/10});
     }
     gms.columns = [];
-    gms.columns.push({key: "gm_id", label: "GM ID"});
+    gms.columns.push({key: "gm_id", label: "Medium"});
     gms.columns.push({key: "name", label: "Name"});
     gms.columns.push({key: "score", label: "Score"});
     gms.total = count_rows.total.value;

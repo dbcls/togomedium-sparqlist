@@ -1,11 +1,9 @@
-# List infraspecific taxons by a taxonomy id
-
+# List strainss by a taxonomy id
 
 ## Parameters
-fraspecific
 * `tax_id`
   * default: 1386
-  * example: 2, 2157
+  * example: 315405, 2, 2157
 * `limit` limit
   * default: 10
 * `offset` offset
@@ -24,7 +22,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 
-SELECT  (COUNT(DISTINCT ?tax) AS ?total)  ?limit ?offset
+SELECT  (COUNT(DISTINCT ?strain) AS ?total)  ?limit ?offset
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/strain/2023>
@@ -38,9 +36,7 @@ WHERE {
   ?culture_for gmo:strain_id ?strain .
   ?medium gmo:GMO_000114 ?culture_for ;
     rdf:type  gmo:GMO_000001 . #exist media
-  ?tax ddbj-tax:scientificName ?name ;
-    ddbj-tax:rank ?rank_uri .
-  ?rank_uri rdfs:label ?rank .
+  ?tax ddbj-tax:scientificName ?name .
   FILTER(!REGEX(?name, "Candidatus"))
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
@@ -53,10 +49,12 @@ WHERE {
 DEFINE sql:select-option "order"
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 
-SELECT  DISTINCT ?tax ?name ?rank
+SELECT  DISTINCT ?strain_id ?strain_name
+ (GROUP_CONCAT(DISTINCT ?original_strain_id; SEPARATOR = ", ") AS ?original_strain_ids)
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/media/2023>
 FROM <http://growthmedium.org/strain/2023>
@@ -66,15 +64,17 @@ WHERE {
   ?infraxpecific_tax rdfs:subClassOf* ?search_tax_id .
   ?infraxpecific_tax ddbj-tax:rank ddbj-tax:Species .
   ?tax rdfs:subClassOf* ?infraxpecific_tax .
-  ?strain gmo:taxon ?tax .
+  ?strain gmo:taxon ?tax ;
+    rdfs:label ?strain_name ;
+    dcterms:identifier ?strain_id ;
+    gmo:origin_strain/dcterms:identifier ?original_strain_id .
   ?culture_for gmo:strain_id ?strain .
   ?medium gmo:GMO_000114 ?culture_for ;
     rdf:type  gmo:GMO_000001 . #exist media
-  ?tax ddbj-tax:scientificName ?name ;
-    ddbj-tax:rank ?rank_uri .
-  ?rank_uri rdfs:label ?rank .
+  ?tax ddbj-tax:scientificName ?name .
   FILTER(!REGEX(?name, "Candidatus"))
-} ORDER BY ?name
+} GROUP BY ?strain_id ?strain_name
+ORDER BY ?strain_name
 LIMIT {{limit}}
 OFFSET {{offset}}
 ```
@@ -94,9 +94,6 @@ OFFSET {{offset}}
       }
       return Object.entries(result).length ? result : null;
     };
-    const getIdFromUri = (str) => {
-      return str.split("/").pop();
-    };
     //
     const info = parseSparqlObject(count.results.bindings[0]);
     const total = !!info ? parseInt(info.total) : 0;
@@ -104,23 +101,22 @@ OFFSET {{offset}}
     const limit = !!info ? parseInt(info.limit) : 0;
     //
     const KEY_ID = "id";
-    const KEY_RANK = "rank";
     const KEY_NAME = "name";
+    const KEY_OTHER_IDS = "other_ids";
     const columns = [
-      {key: KEY_ID, label: "TAX ID"},
-      {key: KEY_RANK, label: "Rank"},
+      {key: KEY_ID, label: "Strain ID"},
       {key: KEY_NAME, label: "Name"},
+      {key: KEY_OTHER_IDS, label: "Other IDs"},
     ];
     const contents = result.results.bindings
       .map((r) => parseSparqlObject(r))
-      .map((r) => ({...r, id: getIdFromUri(r.tax)}))
       .map((r) => ({
         [KEY_ID]: {
-          label: r.id,
-          href: `/taxon/${r.id}`,
+          label: r.strain_id,
+          href: `/strain/${r.strain_id}`,
         },
-        [KEY_RANK]: r.rank,
-        [KEY_NAME]: r.name,
+        [KEY_NAME]: r.strain_name,
+        [KEY_OTHER_IDS]: r.original_strain_ids,
       }));
     //
     return {total, offset, limit, contents, columns};

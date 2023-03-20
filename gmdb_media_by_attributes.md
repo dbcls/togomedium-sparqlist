@@ -1,6 +1,6 @@
 # Get growth media by multiple GMO IDs
 
-Retrieve growth media with all the specified GMO IDs.  
+Retrieve growth media with all the specified GMO IDs.
 If the hierarchical hit contains even one component, `exact-match` will return false
 
 ## Parameters
@@ -15,7 +15,7 @@ If the hierarchical hit contains even one component, `exact-match` will return f
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `exact_query_text` query params
 
@@ -66,8 +66,8 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT (COUNT(DISTINCT ?gm) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
 {{hieralcal_query_text}}
   ?gm rdfs:label ?label .
@@ -84,13 +84,17 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-SELECT DISTINCT ?gm ?label
-FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+
+SELECT DISTINCT ?gm ?label ?original_media_id
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
 {{hieralcal_query_text}}
-  ?gm rdfs:label ?label .
+  ?gm rdfs:label ?media_name ;
+    skos:altLabel ?original_media_id .
+  BIND (if(STR(?media_name) = "", "(Unnamed medium)", ?media_name) AS ?label)
 }
 LIMIT {{limit}}
 OFFSET {{offset}}
@@ -104,10 +108,11 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 SELECT DISTINCT ?gm
-FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/gmo/v0.24>
 WHERE {
 {{exact_query_text}}
   ?gm rdfs:label ?label .
@@ -131,9 +136,9 @@ WHERE {
       let gm_id = row["gm"]["value"].split("/").pop();
       // subClassOfを使用せずにヒットした場合はtrue, subClassOf*を使用して階層ヒットした場合はfalse
       if (exact_match_gmo_id.includes(gm_id)) {
-        return {"gm_id": gm_id, "name": row["label"]["value"], "exact_match": true};
+        return {"gm_id": gm_id, "name": row["label"]["value"], "original_media_id": row["original_media_id"]["value"], "exact_match": true};
       } else {
-        return {"gm_id": gm_id, "name": row["label"]["value"], "exact_match": false};
+        return {"gm_id": gm_id, "name": row["label"]["value"], "original_media_id": row["original_media_id"]["value"], "exact_match": false};
       }
     });
     return {"total": total, "offset": offset, "limit": limit, "contents": contents};

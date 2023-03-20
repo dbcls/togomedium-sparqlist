@@ -14,7 +14,7 @@ Show a list of organisms with the given tax ID(s).
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `tax_id_ary` Parse_argument
 ```javascript
@@ -35,30 +35,32 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
-PREFIX taxo: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
-SELECT 
+SELECT
   (COUNT(DISTINCT ?tax_id) AS ?total) ?limit ?offset
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-FROM <http://kegg/taxonomy/>
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
-
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/strain/2023>
 WHERE {
   VALUES ?tax_id { {{tax_id_ary}} } .
-  ?t a taxo:Taxon ;
-       taxo:rank ?r ;
-       dcterms:identifier ?tax_id ;
-       rdfs:label ?l .
-  ?gm gmo:GMO_000114 ?org .
-  ?org gmo:GMO_000020 ?t .
-  ?r rdfs:label ?r_label
+  ?taxon_url a ddbj-tax:Taxon ;
+    ddbj-tax:rank ?rank ;
+    dcterms:identifier ?tax_id ;
+    rdfs:label ?tax_name .
+  ?strain gmo:taxon ?taxon_url ;
+    rdf:type sio:SIO_010055 .
+  ?culture_for gmo:strain_id ?strain .
+  ?medium_uri gmo:GMO_000114 ?culture_for ;
+    rdf:type gmo:GMO_000001 . #exist media
+  ?rank rdfs:label ?rank_label .
   OPTIONAL {
-    ?t taxo:authority ?auth
+    ?taxon_url ddbj-tax:authority ?auth
   }
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
-} 
+}
 
 ```
 
@@ -69,33 +71,31 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
-PREFIX taxo: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
-SELECT 
-  ?tax_id
-  (SAMPLE(?t) AS ?taxonomy)
-  (SAMPLE(?l) AS ?label)
+SELECT ?tax_id ?taxon_url ?tax_name ?rank_label
   (GROUP_CONCAT(?auth; SEPARATOR = ", ") AS ?authority)
-  (SAMPLE(?r_label) AS ?rank)
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-FROM <http://kegg/taxonomy/>
-FROM <http://growthmedium.org/media/>
-FROM <http://growthmedium.org/gmo/>
-
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
+FROM <http://growthmedium.org/media/2023>
+FROM <http://growthmedium.org/strain/2023>
 WHERE {
   VALUES ?tax_id { {{tax_id_ary}} } .
-  ?t a taxo:Taxon ;
-       taxo:rank ?r ;
-       dcterms:identifier ?tax_id ;
-       rdfs:label ?l .
-  ?gm gmo:GMO_000114 ?org .
-  ?org gmo:GMO_000020 ?t .
-  ?r rdfs:label ?r_label
+  ?taxon_url a ddbj-tax:Taxon ;
+    ddbj-tax:rank ?rank ;
+    dcterms:identifier ?tax_id ;
+    rdfs:label ?tax_name .
+  ?strain gmo:taxon ?taxon_url ;
+    rdf:type sio:SIO_010055 .
+  ?culture_for gmo:strain_id ?strain .
+  ?medium_uri gmo:GMO_000114 ?culture_for ;
+    rdf:type gmo:GMO_000001 . #exist media
+  ?rank rdfs:label ?rank_label .
   OPTIONAL {
-    ?t taxo:authority ?auth
+    ?taxon_url ddbj-tax:authority ?auth
   }
-} 
-GROUP BY ?tax_id
+}
+GROUP BY ?taxon_url ?tax_id ?tax_name  ?rank_label
 LIMIT {{limit}}
 OFFSET {{offset}}
 ```
@@ -109,24 +109,24 @@ OFFSET {{offset}}
     let count_rows = count.results.bindings[0] ;
     let taxonomies = {} ;
     taxonomies.contents = [];
-    
+
     taxonomies.total = 0;
     taxonomies.limit = 0;
     taxonomies.offset = 0;
-    
+
     if (rows.length == 0) {
       return taxonomies;
     }
-    
+
     for (let i = 0; i < rows.length ;i++) {
       taxonomies.contents.push({
         tax_id: {label: rows[i].tax_id.value,
-                 href: "/organism/" + rows[i].taxonomy.value},
-        name: rows[i].label.value,
+                 href: "/taxon/" + rows[i].tax_id.value},
+        name: rows[i].tax_name.value,
         authority_name: rows[i].authority.value
       });
     }
-    
+
     taxonomies.columns = [];
     taxonomies.columns.push({key: "tax_id", label: "Tax ID"});
     taxonomies.columns.push({key: "name", label: "Name"});
@@ -134,7 +134,7 @@ OFFSET {{offset}}
     taxonomies.total = count_rows.total.value ;
     taxonomies.limit = count_rows.limit.value ;
     taxonomies.offset = count_rows.offset.value ;
-    
+
     return taxonomies;
   }
 })

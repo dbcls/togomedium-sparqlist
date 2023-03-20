@@ -10,7 +10,7 @@ Retrieve a growth medium with the given growth medium ID.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `metadata` retrieve medium metadata
 

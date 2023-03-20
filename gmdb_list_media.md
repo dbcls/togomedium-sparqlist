@@ -11,7 +11,7 @@ Show a list of growth media with the given keyword.
 
 ## Endpoint
 
-http://growthmedium.org/sparql
+http://togomedium.org/sparql
 
 ## `count` count results
 
@@ -110,7 +110,7 @@ OFFSET {{offset}}
     contents = gms_with_taxonomy.concat(gms_wo_taxonomy);
     gms.contents = contents;
     gms.columns = [];
-    gms.columns.push({key: "gm_id", label: "GM ID"});
+    gms.columns.push({key: "gm_id", label: "Medium"});
     gms.columns.push({key: "name", label: "Name"});
     gms.total = count_rows.total.value ;
     gms.limit = count_rows.limit.value ;
