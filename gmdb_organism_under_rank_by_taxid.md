@@ -149,9 +149,9 @@ OFFSET {{offset}}
     const KEY_MEDIA_COUNT = "num_of_media";
     const columns = [
       {key: KEY_TAX_ID, label: "Tax ID"},
-      {key: KEY_Label, label: "Num Of Media"},
+      {key: KEY_Label, label: "Name"},
       {key: KEY_RANK, label: "Rank"},
-      {key: KEY_MEDIA_COUNT, label: "Name"}
+      {key: KEY_MEDIA_COUNT, label: "Num Of Media"}
     ];
 
     const contents = result.results.bindings
