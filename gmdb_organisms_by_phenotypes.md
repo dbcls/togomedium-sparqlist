@@ -24,6 +24,8 @@ Retrieve organism by phenotype
   * examples: MPO_01015
 * `MPO_03006` Salinity type
   * examples: MPO_03007
+* `MPO_04053` Energy metabolism
+  * examples: MPO_04153
 * `limit` limit
   * default: 10
 * `offset` offset
@@ -242,6 +244,19 @@ http://togomedium.org/sparql
   }
 })
 ```
+## `energy_metabolism_query_txt`
+```javascript
+({
+  json(params) {
+    let energy_metabolism_query_txt = "";
+    if (params["MPO_04053"] && params["MPO_04053"] != "" && params["MPO_04053"].startsWith("MPO")) {
+      energy_metabolism_query_txt = "?phenotype mpo:MPO_04053 mpo:" + params["MPO_04053"].trim() + " ."
+    }
+    return energy_metabolism_query_txt;
+  }
+})
+```
+
 ## `count`
 ```sparql
 PREFIX mpo: <http://purl.jp/bio/10/mpo#>
@@ -250,6 +265,7 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(DISTINCT ?tax_id) AS ?total) ?limit ?offset
+FROM <http://growthmedium.org/strain/2024>
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/media/2023>
@@ -265,6 +281,7 @@ FROM <http://growthmedium.org/media/2023>
   {{motility_query_txt}}
   {{cell_shape_query_txt}}
   {{salinity_query_txt}}
+  {{energy_metabolism_query_txt}}
   ?strain sio:SIO_001279 ?phenotype ;
     rdf:type sio:SIO_010055 ;
     rdfs:label ?strain_name ;
@@ -286,6 +303,7 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT ?tax_id ?tax_name  #?strain ?strain_name
+FROM <http://growthmedium.org/strain/2024>
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/media/2023>
@@ -301,6 +319,7 @@ FROM <http://growthmedium.org/media/2023>
   {{motility_query_txt}}
   {{cell_shape_query_txt}}
   {{salinity_query_txt}}
+  {{energy_metabolism_query_txt}}
   ?strain sio:SIO_001279 ?phenotype ;
     rdf:type sio:SIO_010055 ;
     rdfs:label ?strain_name ;

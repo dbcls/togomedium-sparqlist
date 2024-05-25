@@ -54,28 +54,32 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
-SELECT
-  ?strain_id ?strain_name ?tax_id ?tax_name
-  (GROUP_CONCAT(DISTINCT ?original_strain_id; SEPARATOR = ", ") AS ?original_strain_ids)
+SELECT ?strain_id ?strain_name ?tax_id ?tax_name ?original_strain_ids
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://growthmedium.org/media/2023>
-WHERE {
-  ?medium_uri gmo:GMO_000114 ?culture_for ;
-    rdf:type gmo:GMO_000001 . #exist media
-  ?culture_for gmo:strain_id ?strain .
-  ?strain rdf:type sio:SIO_010055 ;
-    dcterms:identifier ?strain_id ;
-    rdfs:label ?strain_name ;
-    gmo:origin_strain/dcterms:identifier ?original_strain_id .
-  OPTIONAL {
-    ?strain gmo:taxon ?taxon_url .
-    ?taxon_url dcterms:identifier ?tax_id ;
-      rdfs:label ?tax_name .
-  }
+{
+  {
+    SELECT ?strain_id ?strain_name ?tax_id ?tax_name
+    (GROUP_CONCAT(DISTINCT ?original_strain_id; SEPARATOR = ", ") AS ?original_strain_ids)
+    WHERE {
+      ?medium_uri gmo:GMO_000114 ?culture_for ;
+        rdf:type gmo:GMO_000001 . #exist media
+      ?culture_for gmo:strain_id ?strain .
+      ?strain rdf:type sio:SIO_010055 ;
+        dcterms:identifier ?strain_id ;
+        rdfs:label ?strain_name ;
+        gmo:origin_strain/dcterms:identifier ?original_strain_id .
+      OPTIONAL {
+        ?strain gmo:taxon ?taxon_url .
+        ?taxon_url dcterms:identifier ?tax_id ;
+          rdfs:label ?tax_name .
+      }
+    }
+    GROUP BY ?strain_id ?strain_name ?tax_id ?tax_name
+    ORDER BY ?strain_name
+   }
 }
-GROUP BY ?strain_id ?strain_name ?tax_id ?tax_name
-ORDER BY ?strain_name
 LIMIT {{limit}}
 OFFSET {{offset}}
 ```

@@ -21,6 +21,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
+PREFIX olo:     <http://purl.org/ontology/olo/core#>
 
 SELECT (COUNT(DISTINCT ?medium_uri) AS ?total) ?limit ?offset
 FROM <http://growthmedium.org/media/2023>
@@ -28,7 +29,9 @@ WHERE {
   ?medium_uri a gmo:GMO_000001 ;
     dcterms:identifier ?media_id ;
     skos:altLabel ?original_media_id ;
-    rdfs:label ?label .
+    rdfs:label ?label ;
+    olo:length ?paragraph_length .
+  FILTER (?paragraph_length > 0)
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
@@ -41,6 +44,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
+PREFIX olo:     <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?media_id ?original_media_id ?label ?source_uri
 FROM <http://growthmedium.org/media/2023>
@@ -48,7 +52,9 @@ WHERE {
   ?medium_uri a gmo:GMO_000001 ;
     dcterms:identifier ?media_id ;
     skos:altLabel ?original_media_id ;
-    rdfs:label ?media_name .
+    rdfs:label ?media_name ;
+    olo:length ?paragraph_length .
+  FILTER (?paragraph_length > 0)
   OPTIONAL {
     ?medium_uri gmo:GMO_000108 ?source_uri .
   }
