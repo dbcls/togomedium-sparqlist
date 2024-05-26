@@ -24,6 +24,7 @@ prefix mpo: <http://purl.jp/bio/10/mpo#>
 
 SELECT (COUNT(?phenotype) AS ?total) ?limit ?offset
 FROM <http://growthmedium.org/strain/2023>
+FROM <http://growthmedium.org/strain/2024>
 FROM <http://growthmedium.org/mpo/v0.74>
 {
   <http://togomedium.org/strain/{{strain_id}}>  sio:SIO_001279 ?phenotype .
@@ -56,6 +57,7 @@ SELECT DISTINCT ?source_uri ?source_label
   ?phenotype_property ?property_type ?property_label
   ?phenotype_value ?value_type ?value_label
 FROM <http://growthmedium.org/strain/2023>
+FROM <http://growthmedium.org/strain/2024>
 FROM <http://growthmedium.org/mpo/v0.74>
 WHERE {
   <http://togomedium.org/strain/{{strain_id}}>  sio:SIO_001279 ?phenotype .

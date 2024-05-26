@@ -22,7 +22,7 @@ PREFIX taxo: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 
 SELECT  DISTINCT ?tax ?name ?rank
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
 WHERE {
   VALUES ?search_tax_id { taxid:{{tax_id}} }
   ?search_tax_id rdf:type taxo:Taxon .

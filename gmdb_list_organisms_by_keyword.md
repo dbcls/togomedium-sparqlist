@@ -26,7 +26,7 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 SELECT
   (COUNT(DISTINCT ?tax_id) AS ?total) ?offset ?limit
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
 WHERE {
   ?t a ddbj-tax:Taxon ;
      dcterms:identifier ?tax_id ;
@@ -45,7 +45,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 SELECT ?tax_id ?t ?l
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
+FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
 WHERE {
   ?t a ddbj-tax:Taxon ;
      dcterms:identifier ?tax_id ;

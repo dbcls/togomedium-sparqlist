@@ -27,6 +27,7 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 SELECT (COUNT(DISTINCT ?medium) AS ?total) ?limit ?offset
 FROM <http://togomedium.org/media>
 FROM <http://growthmedium.org/strain/2023>
+FROM <http://growthmedium.org/strain/2024>
 WHERE {
   VALUES ?search_strain_id { "{{strain_id}}" }
   ?strain dcterms:identifier ?search_strain_id ;
@@ -50,6 +51,7 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 SELECT DISTINCT ?media_id ?original_media_id ?label
 FROM <http://togomedium.org/media>
 FROM <http://growthmedium.org/strain/2023>
+FROM <http://growthmedium.org/strain/2024>
 WHERE {
   VALUES ?search_strain_id { "{{strain_id}}" }
   ?strain dcterms:identifier ?search_strain_id ;
