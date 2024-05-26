@@ -38,8 +38,8 @@ PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?gmo_id ?name
  (GROUP_CONCAT(DISTINCT ?label_ja; SEPARATOR = ", ") AS ?name_ja)
-FROM <http://growthmedium.org/media/2023>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/media>
+FROM <http://togomedium.org/gmo>
 WHERE {
   {{gmo_subquery_text}}
   ?medium dcterms:identifier ?media_id .

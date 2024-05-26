@@ -29,7 +29,7 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX tax:  <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 SELECT DISTINCT ?medium_id ?original_media_id ?medium_name ?strain_id ?strain_name ?tax ?tax_name ?ancestor_tax ?ancestor_tax_name ?rank
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 WHERE {

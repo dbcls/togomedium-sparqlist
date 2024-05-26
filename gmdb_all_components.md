@@ -14,7 +14,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT DISTINCT ?gmo_uri ?gmo_id  ?label
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/gmo>
 WHERE {
   ?gmo_uri rdfs:subClassOf+ gmo:GMO_000002 ;
      dcterms:identifier ?gmo_id ;

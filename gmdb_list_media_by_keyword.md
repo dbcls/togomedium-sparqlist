@@ -28,9 +28,9 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(DISTINCT ?medium_uri) AS ?total) ?limit ?offset
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/gmo>
 WHERE {
   ?medium_uri a gmo:GMO_000001 ;
     dcterms:identifier ?media_id ;
@@ -67,9 +67,9 @@ SELECT DISTINCT ?medium_uri ?media_id ?original_media_id
   (GROUP_CONCAT(?label; SEPARATOR = ", ") AS ?label)
   (GROUP_CONCAT(DISTINCT ?tax_name; SEPARATOR = ", ") AS ?organism_names)
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/gmo>
 WHERE {
   ?medium_uri a gmo:GMO_000001 ;
     dcterms:identifier ?media_id ;

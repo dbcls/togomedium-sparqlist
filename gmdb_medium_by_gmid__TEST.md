@@ -21,7 +21,7 @@ prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?gm ?name ?src_url ?ph
 FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+FROM <http://togomedium.org/gmo>
 {
   VALUES ?gm_no { "{{gm_id}}" }
   ?gm dcterms:identifier ?gm_no ;
@@ -45,7 +45,7 @@ prefix sio:     <http://semanticscience.org/resource/>
 
 SELECT ?paragraph_index ?subcomponent_name ?component_name ?volume ?unit ?conc_value ?conc_unit ?gmo ?gmo_id ?label ?property_id ?property ?property_label ?role_id ?role ?role_label
 FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+FROM <http://togomedium.org/gmo>
 FROM <http://growthmedium.org/uo>
 {
   VALUES ?medium_no { "{{gm_id}}" }
@@ -97,7 +97,7 @@ prefix olo:     <http://purl.org/ontology/olo/core#>
 
 SELECT ?paragraph_index ?comment
 FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+FROM <http://togomedium.org/gmo>
 {
   VALUES ?medium_no {  "{{gm_id}}" }
   ?medium dcterms:identifier ?medium_no ;

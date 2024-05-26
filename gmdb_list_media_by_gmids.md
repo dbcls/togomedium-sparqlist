@@ -37,7 +37,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT (COUNT(DISTINCT ?medium_uri) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 WHERE {
   VALUES ?medium_no { {{media_values}} }
   ?medium_uri (dcterms:identifier | skos:altLabel) ?medium_no ;
@@ -59,7 +59,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT DISTINCT ?media_id ?original_media_id ?media_name
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 WHERE {
   VALUES ?medium_no { {{media_values}} }
   ?medium_uri (dcterms:identifier | skos:altLabel) ?medium_no ;

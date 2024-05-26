@@ -26,7 +26,7 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 SELECT ?phylum ?phylum_id ?phylum_label ?limit ?offset (COUNT(DISTINCT ?medium_uri) AS ?media)
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 {
   ?medium_uri gmo:GMO_000114 ?culture_for ;
      rdf:type gmo:GMO_000001 . #exist media

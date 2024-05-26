@@ -26,7 +26,7 @@ SELECT
   (COUNT(DISTINCT ?tax_id) AS ?total) ?limit ?offset
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 WHERE {
   ?medium_uri gmo:GMO_000114 ?culture_for ;
     rdf:type gmo:GMO_000001 . #exist media
@@ -58,7 +58,7 @@ SELECT
   (GROUP_CONCAT(DISTINCT(?auth); SEPARATOR = ", ") AS ?authority)
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 WHERE {
   ?medium_uri gmo:GMO_000114 ?culture_for ;
     rdf:type gmo:GMO_000001 . #exist media

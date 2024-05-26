@@ -26,7 +26,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX gmo:     <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(?media_original_name) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 FROM <http://growthmedium.org/similarity>
 {
   VALUES ?medium_no { "{{gm_id}}" }
@@ -56,7 +56,7 @@ SELECT ?media
  (?medium_id AS ?gm_id)
  (?media_name AS ?gm_name)
  ?score
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 FROM <http://growthmedium.org/similarity>
 {
   VALUES ?medium_no { "{{gm_id}}" }

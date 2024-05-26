@@ -40,7 +40,7 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 SELECT (COUNT(DISTINCT ?medium_id) AS ?total) ?limit ?offset
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 WHERE {
   VALUES ?tax_ids { {{tax_values}} }
   ?tax_ids rdf:type ddbj-tax:Taxon .
@@ -72,7 +72,7 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 SELECT DISTINCT ?medium_id ?medium_name ?original_media_id
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 WHERE {
   VALUES ?tax_ids { {{tax_values}} }
   ?tax_ids rdf:type ddbj-tax:Taxon .

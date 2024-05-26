@@ -37,7 +37,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT
   (COUNT(DISTINCT ?gmo_id) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/gmo>
 WHERE {
   VALUES ?gmo_id { {{gmo_id_ary}} } .
   ?c rdfs:subClassOf+ gmo:GMO_000002 ;
@@ -65,7 +65,7 @@ SELECT
   (SAMPLE(?c) AS ?component)
   (SAMPLE(?l) AS ?label)
   (GROUP_CONCAT(?alt_label; SEPARATOR = ", ") AS ?alt_labels)
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/gmo>
 WHERE {
   VALUES ?gmo_id { {{gmo_id_ary}} } .
   ?c rdfs:subClassOf+ gmo:GMO_000002 ;

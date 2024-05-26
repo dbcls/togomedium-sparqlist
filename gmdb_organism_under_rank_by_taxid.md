@@ -68,7 +68,7 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 SELECT (COUNT(DISTINCT ?child_tax) AS ?total) ?limit ?offset
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 WHERE {
   VALUES ?tax_id { {{tax_id}} }
   ?search_tax a taxont:Taxon ;
@@ -98,7 +98,7 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 SELECT ?child_tax_id ?child_tax_name ?rank_name COUNT(DISTINCT ?medium) AS ?num_of_media
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 WHERE {
   VALUES ?tax_id { {{tax_id}} }
   ?search_tax a taxont:Taxon ;

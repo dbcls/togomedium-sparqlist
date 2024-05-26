@@ -25,7 +25,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT (COUNT(DISTINCT ?component) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/gmo>
 WHERE {
   ?component rdfs:subClassOf+ gmo:GMO_000002 ;
     dcterms:identifier ?gmo_id ;
@@ -52,7 +52,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 SELECT
   ?gmo_id ?component ?pref_label
   (GROUP_CONCAT(DISTINCT ?alt_label; SEPARATOR = ", ") AS ?alt_labels)
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/gmo>
 WHERE {
   ?component rdfs:subClassOf+ gmo:GMO_000002 ;
     dcterms:identifier ?gmo_id ;

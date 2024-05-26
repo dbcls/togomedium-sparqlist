@@ -22,7 +22,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT DISTINCT ?gmo ?pref_label ?id ?label_ja ?alt_label_en ?alt_label_ja ?super_gmo ?super_gmo_id ?super_gmo_label_en
                 ?sub_gmo ?sub_gmo_label_en ?sub_gmo_id ?link ?property ?property_id ?property_label_en ?role ?role_id ?role_label_en
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/gmo>
 WHERE {
   VALUES ?gmo { <http://purl.jp/bio/10/gmo/{{gmo_id}}> } .
   ?gmo skos:prefLabel ?pref_label ;

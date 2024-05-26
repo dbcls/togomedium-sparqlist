@@ -27,7 +27,7 @@ PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT (COUNT(DISTINCT ?gm) AS ?total) ?limit ?offset
 FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+FROM <http://togomedium.org/gmo>
 WHERE {
   ?gmo dcterms:identifier "{{gmo_id}}" .
   ?paragraph gmo:has_component/gmo:gmo_id ?gmo .
@@ -49,7 +49,7 @@ PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?gm ?gm_id ?label
 FROM <http://growthmedium.org/media/20210316>
-FROM <http://growthmedium.org/gmo/v0.23>
+FROM <http://togomedium.org/gmo>
 WHERE {
   ?gmo dcterms:identifier "{{gmo_id}}" .
   ?paragraph gmo:has_component/gmo:gmo_id ?gmo .

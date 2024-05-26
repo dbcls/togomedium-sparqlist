@@ -268,7 +268,7 @@ SELECT (COUNT(DISTINCT ?tax_id) AS ?total) ?limit ?offset
 FROM <http://growthmedium.org/strain/2024>
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 {
   ?phenotype a prov:Entity .
   {{temp_query_txt}}
@@ -306,7 +306,7 @@ SELECT DISTINCT ?tax_id ?tax_name  #?strain ?strain_name
 FROM <http://growthmedium.org/strain/2024>
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 {
   ?phenotype a prov:Entity .
   {{temp_query_txt}}

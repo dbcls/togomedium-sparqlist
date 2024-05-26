@@ -66,8 +66,8 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT (COUNT(DISTINCT ?gm) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/media/2023>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/media>
+FROM <http://togomedium.org/gmo>
 WHERE {
 {{hieralcal_query_text}}
   ?gm rdfs:label ?label .
@@ -88,8 +88,8 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 
 SELECT DISTINCT ?gm ?label ?original_media_id
-FROM <http://growthmedium.org/media/2023>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/media>
+FROM <http://togomedium.org/gmo>
 WHERE {
 {{hieralcal_query_text}}
   ?gm rdfs:label ?media_name ;
@@ -111,8 +111,8 @@ PREFIX olo: <http://purl.org/ontology/olo/core#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 SELECT DISTINCT ?gm
-FROM <http://growthmedium.org/media/2023>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/media>
+FROM <http://togomedium.org/gmo>
 WHERE {
 {{exact_query_text}}
   ?gm rdfs:label ?label .

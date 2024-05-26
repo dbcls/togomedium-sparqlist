@@ -30,7 +30,7 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 SELECT  DISTINCT ?tax ?name
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 FROM <http://growthmedium.org/strain/2023>
 WHERE {
   VALUES ?search_tax_id { taxid:{{tax_id}} }

@@ -21,8 +21,8 @@ PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 SELECT ?gm ?name ?original_media_id ?src_url ?ph
-FROM <http://growthmedium.org/media/2023>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/media>
+FROM <http://togomedium.org/gmo>
 {
   VALUES ?gm_no { "{{gm_id}}" }
   ?gm (dcterms:identifier | skos:altLabel) ?gm_no ;
@@ -51,8 +51,8 @@ PREFIX sio:     <http://semanticscience.org/resource/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 SELECT ?paragraph_index ?subcomponent_name ?component_name ?volume ?unit ?conc_value ?conc_unit ?gmo ?gmo_id ?label ?property_id ?property ?property_label ?role_id ?role ?role_label ?reference_media_id
-FROM <http://growthmedium.org/media/2023>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/media>
+FROM <http://togomedium.org/gmo>
 FROM <http://growthmedium.org/uo>
 {
   VALUES ?medium_no { "{{gm_id}}" }
@@ -108,8 +108,8 @@ prefix olo:     <http://purl.org/ontology/olo/core#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 SELECT ?paragraph_index ?comment
-FROM <http://growthmedium.org/media/2023>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/media>
+FROM <http://togomedium.org/gmo>
 {
   VALUES ?medium_no { "{{gm_id}}" }
   ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;

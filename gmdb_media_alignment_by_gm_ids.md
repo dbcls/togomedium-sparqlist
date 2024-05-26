@@ -39,9 +39,9 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?medium_id ?original_media_id ?medium_name ?gmo_id
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 FROM <http://growthmedium.org/media/components>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/gmo>
 WHERE {
   VALUES ?medium_no { {{media_values}} }
   ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
@@ -65,7 +65,7 @@ PREFIX olo: <http://purl.org/ontology/olo/core#>
 PREFIX sio: <http://semanticscience.org/resource/>
 
 SELECT DISTINCT ?medium_id ?tax ?tax_name
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 FROM <http://growthmedium.org/strain/2023>
 FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
 WHERE {
@@ -88,10 +88,10 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?ancestor_gmo_id ?ancestor_gmo_label ?parent_gmo_id ?disp_order ?category_name
-FROM <http://growthmedium.org/media/2023>
+FROM <http://togomedium.org/media>
 FROM <http://growthmedium.org/media/components>
-FROM <http://growthmedium.org/gmo/v0.24>
-FROM <http://growthmedium.org/gmo/v0.24/display_order>
+FROM <http://togomedium.org/gmo>
+FROM <http://togomedium.org/gmo/display_order>
 WHERE {
   VALUES ?medium_no  { {{media_values}} }
   ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;

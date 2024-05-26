@@ -26,8 +26,8 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT (COUNT(DISTINCT ?medium) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/media/2023>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/media>
+FROM <http://togomedium.org/gmo>
 WHERE {
   ?gmo dcterms:identifier "{{gmo_id}}" .
   ?medium olo:slot/olo:item/gmo:has_component/gmo:gmo_id ?gmo .
@@ -49,8 +49,8 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?media_id ?label ?original_media_id
-FROM <http://growthmedium.org/media/2023>
-FROM <http://growthmedium.org/gmo/v0.24>
+FROM <http://togomedium.org/media>
+FROM <http://togomedium.org/gmo>
 WHERE {
   ?gmo dcterms:identifier "{{gmo_id}}" .
   ?medium olo:slot/olo:item/gmo:has_component/gmo:gmo_id ?gmo .
