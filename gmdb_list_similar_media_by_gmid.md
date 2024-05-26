@@ -27,7 +27,7 @@ PREFIX gmo:     <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(?media_original_name) AS ?total) ?limit ?offset
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/similarity>
+FROM <http://togomedium.org/media/similarity>
 {
   VALUES ?medium_no { "{{gm_id}}" }
   ?search_media (dcterms:identifier | skos:altLabel) ?medium_no .
@@ -57,7 +57,7 @@ SELECT ?media
  (?media_name AS ?gm_name)
  ?score
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/similarity>
+FROM <http://togomedium.org/media/similarity>
 {
   VALUES ?medium_no { "{{gm_id}}" }
   ?search_media (dcterms:identifier | skos:altLabel) ?medium_no .

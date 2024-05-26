@@ -40,7 +40,7 @@ PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?medium_id ?original_media_id ?medium_name ?gmo_id
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/media/components>
+FROM <http://togomedium.org/media/components>
 FROM <http://togomedium.org/gmo>
 WHERE {
   VALUES ?medium_no { {{media_values}} }
@@ -90,7 +90,7 @@ PREFIX olo: <http://purl.org/ontology/olo/core#>
 
 SELECT DISTINCT ?ancestor_gmo_id ?ancestor_gmo_label ?parent_gmo_id ?disp_order ?category_name
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/media/components>
+FROM <http://togomedium.org/media/components>
 FROM <http://togomedium.org/gmo>
 FROM <http://togomedium.org/gmo/display_order>
 WHERE {
