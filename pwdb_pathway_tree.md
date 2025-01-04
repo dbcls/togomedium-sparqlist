@@ -17,7 +17,7 @@ PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 
 SELECT DISTINCT ?ancestor AS ?id ?label ?parent COUNT(?tax_id) AS ?count
-FROM <http://growthmedium.org/pathway>
+FROM <http://togomedium.org/pathway>
 {
   VALUES ?types { pathway:Pathway pathway:PathwayVariant }
   {{#if tax_id}}

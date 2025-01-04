@@ -17,8 +17,8 @@ PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 SELECT DISTINCT ?ancestor_tax AS ?id ?label ?parent COUNT(?pathway) AS ?count
-FROM <http://growthmedium.org/pathway>
-FROM <http://growthmedium.org/taxonomy/filterd_has_pathway>
+FROM <http://togomedium.org/pathway>
+FROM <http://togomedium.org/taxonomy/filterd_has_pathway>
 {
   {{#if pathway_id}}
   pathway:{{pathway_id}} obo:RO_0002175 ?tax_id .
