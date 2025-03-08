@@ -3,7 +3,7 @@
 ## Parameters
 * `tax_id`
   * default: c__Bacilli
-  * example: s__Bacillus_CA%20shivajii, GB_GCA_022733635.1, "RS_GCF_000722875.1
+  * example: s__Bacillus%20licheniformis, GB_GCA_022733635.1, RS_GCF_000722875.1
 * `limit` limit
   * default: 10
 * `offset` offset
@@ -109,6 +109,7 @@ WHERE {
 ORDER BY ?strain_name
 LIMIT {{limit}}
 OFFSET {{offset}}
+```
 
 ## Output
 

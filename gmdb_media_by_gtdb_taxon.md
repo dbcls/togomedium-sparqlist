@@ -22,7 +22,7 @@ http://togomedium.org/sparql
   json(params) {
     let tax_values = "";
     return params["tax_ids"].split(",").map((taxid) => {
-      return "taxid:" + taxid.trim()
+      return "\"" + taxid.trim() + "\""
     }).join(" ");
   }
 })
