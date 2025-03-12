@@ -3,11 +3,32 @@
 ## Parameters
 
 * `tax_id` TaxononyID
-  * examples: 1665
+  * example: 1665
+* `tax_ids` Multiple TaxononyID
+  * example: 243161,243090
 
 ## Endpoint
 
 http://togomedium.org/sparql
+
+
+## `tax_ids`
+```javascript
+({
+  json(params) {
+    // tax_ids(複数), tax_id(単体)の順に条件テキストを設定
+    let taxid_text = null;
+    if (params.tax_ids) {
+      taxid_text = params.tax_ids.split(",").map((tax_id) => {
+        return "taxid:" + tax_id.trim();
+      }).join(', ');
+    } else if (params.tax_id) {
+      taxid_text  = "taxid:" + params.tax_id.trim();
+    }
+    return taxid_text;
+  }
+})
+```
 
 ## `pathway_list` count results
 
@@ -20,8 +41,8 @@ SELECT DISTINCT ?ancestor AS ?id ?label ?parent COUNT(?tax_id) AS ?count
 FROM <http://togomedium.org/pathway>
 {
   VALUES ?types { pathway:Pathway pathway:PathwayVariant }
-  {{#if tax_id}}
-  ?pathway obo:RO_0002175 taxid:{{tax_id}} .
+  {{#if tax_ids}}
+  ?pathway obo:RO_0002175 {{tax_ids}} .
   {{/if}}
   ?pathway rdf:type ?types .
   ?pathway rdfs:subClassOf* ?ancestor . # tax_id指定時に親を取得するために必要
