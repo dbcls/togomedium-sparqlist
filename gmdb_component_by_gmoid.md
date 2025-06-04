@@ -27,10 +27,12 @@ WHERE {
   VALUES ?gmo { <http://purl.jp/bio/10/gmo/{{gmo_id}}> } .
   ?gmo skos:prefLabel ?pref_label ;
        dcterms:identifier ?id .
-  ?gmo rdfs:subClassOf ?super_gmo .
-  ?super_gmo dcterms:identifier ?super_gmo_id ;
-             rdfs:label ?super_gmo_label_en
-  FILTER(LANG(?super_gmo_label_en) = "en")
+  OPTIONAL {
+    ?gmo rdfs:subClassOf ?super_gmo .
+    ?super_gmo dcterms:identifier ?super_gmo_id ;
+               rdfs:label ?super_gmo_label_en
+    FILTER(LANG(?super_gmo_label_en) = "en")
+  }
   OPTIONAL {
     ?gmo rdfs:label ?label_ja
     FILTER(LANG(?label_ja) = "ja")
