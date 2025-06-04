@@ -1,31 +1,59 @@
-# SPARQList for TogoMedium
-The API code of the SPARQList used by TogoMedium.
+# TogoMedium SPARQList
+## Prerequisites
+* Docker
+* Docker Compose
 
-## Usage
-To set up a local environment, first clone the sparqlist modules.
+## Download source code
+Download source code from this repository
 ```
-$ git clone https://github.com/dbcls/sparqlist.git
-$ cd sparqlist
+$ cd /your/path/src/
+$ git https://github.com/dbcls/togomedium-sparqlist.git
+$ cd togomedium-sparqlist
+```
 
-$ cat .gitignore
-/cypress/screenshots/
-/cypress/videos/
-/node_modules/
-/public/
-/repository/  # add this line (recommend)
+## Configuration environment
+Create `.env` file and set values for your environment.
+```
+$ cp template.env .env
+```
+### `CONTAINER_NAME`
+(default: `togomedium_sparqlist`)
 
-$ rm -rf repository # delete example code
+The name of the docker container. Must be unique in the system.
+
+### `REPOSITORY_PATH`
+
+(default: `./repository`)
+
+Path to SPARQLet repository.
+
+### `PORT`
+(default: `3000`)
+
+Port to listen on. Must be unique in the system.
+
+### `ADMIN_PASSWORD`
+(default: sercret)
+
+Admin password.
+
+### `SPARQLIST_TOGOMEDIUM_ENDPOINT`
+(default: xxxxx)
+
+URL of TogoMedium SPARQL endpoint.
+
+
+## Start server
 ```
-Next, clone this repository as a `repository` directory
+$ docker compose up -d
+### Check of startup status
+$ docker compose ps
+NAME              IMAGE                     COMMAND                   SERVICE     CREATED         STATUS         PORTS
+togomedium_sparqlist   ghcr.io/dbcls/sparqlist   "docker-entrypoint.s…"   sparqlist   4 minutes ago   Up 4 minutes   0.0.0.0:3000->3000/tcp
 ```
-$ git clone https://github.com/dbcls/togomedium-sparqlist.git repository
+If you are using a version prior to Docker Compose v2.0.0, use the `docker-compose` command instead of `docker compose`
 ```
-Start the Docker container
+$ docker-compose up -d
 ```
-$ docker run -v $(pwd)/repository:/app/repository --name growthmedium_sparqlist -p 3000:3000 -d ghcr.io/dbcls/sparqlist
-```
-You can access it in your browser at the following URL.
-If you want to edit the API, refer to the `ADMIN_PASSWORD` listed in the `Docker` file in the `sparqlist` repository.
-```
-http://localhost:3000/sparqlist/
-```
+
+Check the SPARQList page can be displayed from a browser on the port number specified in the `.env` file. e.g. `http://localhost:3000`
