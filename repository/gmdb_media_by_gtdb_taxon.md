@@ -40,16 +40,14 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX gtdb: <http://identifiers.org/gtdb/>
 
 SELECT (COUNT(DISTINCT ?medium_id) AS ?total) ?limit ?offset
-FROM <http://togohmedium.org/gtdb/filterd_has_strain>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://togohmedium.org/gtdb/filterd_has_strain>
+FROM <http://togomedium.org/gtdb/filtered_has_strain>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/strain>
 WHERE {
  {
   SELECT DISTINCT ?ncbi_tax_id
-  FROM <http://togohmedium.org/gtdb/filterd_has_strain>
+  FROM <http://togomedium.org/gtdb/filtered_has_strain>
   {
     VALUES ?taxon_type { ddbj-tax:Taxon gtdb:Taxon }
     VALUES ?tax_ids { {{tax_values}} }
@@ -87,16 +85,14 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX gtdb: <http://identifiers.org/gtdb/>
 
 SELECT DISTINCT ?medium_id ?medium_name ?original_media_id
-FROM <http://togohmedium.org/gtdb/filterd_has_strain>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://togohmedium.org/gtdb/filterd_has_strain>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
+FROM <http://togomedium.org/gtdb/filtered_has_strain>
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/strain>
 WHERE {
  {
   SELECT DISTINCT ?ncbi_tax_id
-  FROM <http://togohmedium.org/gtdb/filterd_has_strain>
+  FROM <http://togomedium.org/gtdb/filtered_has_strain>
   {
     VALUES ?taxon_type { ddbj-tax:Taxon gtdb:Taxon }
     VALUES ?tax_ids { {{tax_values}} }

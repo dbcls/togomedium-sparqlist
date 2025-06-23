@@ -23,9 +23,8 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT ?rank
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
+FROM <http://togomedium.org/strain>
 WHERE {
   VALUES ?tax_id { {{tax_id}} }
   ?search_tax a taxont:Taxon ;
@@ -67,9 +66,8 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(DISTINCT ?child_tax) AS ?total) ?limit ?offset
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
+FROM <http://togomedium.org/strain>
 FROM <http://togomedium.org/media>
 WHERE {
   VALUES ?tax_id { {{tax_id}} }
@@ -98,9 +96,8 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT ?child_tax_id ?child_tax_name ?rank_name COUNT(DISTINCT ?medium) AS ?num_of_media
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
+FROM <http://togomedium.org/strain>
 FROM <http://togomedium.org/media>
 WHERE {
   VALUES ?tax_id { {{tax_id}} }

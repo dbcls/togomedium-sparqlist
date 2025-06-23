@@ -23,12 +23,10 @@ PREFIX sio: <http://semanticscience.org/resource/>
 SELECT
   REPLACE(STR(?medium), "http://togomedium.org/medium/", "") AS ?medium_id
   COUNT(DISTINCT ?species_tax) AS ?num_of_species
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://togohmedium.org/gtdb/filterd_has_strain>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
+FROM <http://togomedium.org/gtdb/filtered_has_strain>
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/strain>
 WHERE {
   ?medium rdf:type  gmo:GMO_000001 ;
     gmo:GMO_000114 ?culture_for .

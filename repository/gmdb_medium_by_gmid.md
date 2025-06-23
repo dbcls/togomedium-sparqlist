@@ -53,7 +53,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 SELECT ?paragraph_index ?subcomponent_name ?component_name ?volume ?unit ?conc_value ?conc_unit ?gmo ?gmo_id ?label ?property_id ?property ?property_label ?role_id ?role ?role_label ?reference_media_id
 FROM <http://togomedium.org/media>
 FROM <http://togomedium.org/gmo>
-FROM <http://growthmedium.org/uo>
+FROM <http://togomedium.org/uo>
 {
   VALUES ?medium_no { "{{gm_id}}" }
   ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;

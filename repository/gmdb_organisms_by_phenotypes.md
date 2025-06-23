@@ -265,9 +265,8 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(DISTINCT ?tax_id) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/strain/2024>
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
+FROM <http://togomedium.org/strain>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 FROM <http://togomedium.org/media>
 {
   ?phenotype a prov:Entity .
@@ -303,9 +302,8 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT DISTINCT ?tax_id ?tax_name  #?strain ?strain_name
-FROM <http://growthmedium.org/strain/2024>
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
+FROM <http://togomedium.org/strain>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 FROM <http://togomedium.org/media>
 {
   ?phenotype a prov:Entity .

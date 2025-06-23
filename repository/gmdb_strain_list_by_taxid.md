@@ -23,10 +23,9 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 
 SELECT  (COUNT(DISTINCT ?strain) AS ?total)  ?limit ?offset
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/strain>
 WHERE {
   VALUES ?search_tax_id { taxid:{{tax_id}} }
   ?search_tax_id rdf:type ddbj-tax:Taxon .
@@ -56,10 +55,9 @@ PREFIX taxid: <http://identifiers.org/taxonomy/>
 
 SELECT  DISTINCT ?strain_id ?strain_name
  (GROUP_CONCAT(DISTINCT ?original_strain_id; SEPARATOR = ", ") AS ?original_strain_ids)
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/strain>
 WHERE {
   VALUES ?search_tax_id { taxid:{{tax_id}} }
   ?search_tax_id rdf:type ddbj-tax:Taxon .

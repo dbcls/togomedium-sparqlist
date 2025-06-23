@@ -40,10 +40,9 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 SELECT
   (COUNT(DISTINCT ?tax_id) AS ?total) ?limit ?offset
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/strain>
 WHERE {
   VALUES ?tax_id { {{tax_id_ary}} } .
   ?taxon_url a ddbj-tax:Taxon ;
@@ -77,10 +76,9 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 SELECT ?tax_id ?taxon_url ?tax_name ?rank_label
   (GROUP_CONCAT(?auth; SEPARATOR = ", ") AS ?authority)
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/strain>
 WHERE {
   VALUES ?tax_id { {{tax_id_ary}} } .
   ?taxon_url a ddbj-tax:Taxon ;
