@@ -57,3 +57,16 @@ $ docker-compose up -d
 ```
 
 Check the SPARQList page can be displayed from a browser on the port number specified in the `.env` file. e.g. `http://localhost:3000`
+
+
+## Test API
+The number of items retrieved by executing each API is output to the test directory.
+### Development environment
+```
+python3 test/api_test.py http://localhost:3000
+```
+
+### Production environment
+```
+python3 test/api_test.py https://togomedium.org
+```
