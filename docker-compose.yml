@@ -1,0 +1,12 @@
+services:
+  sparqlist:
+    container_name: ${CONTAINER_NAME:-togomedium-sparqlist}
+    image: ${IMAGE_NAME:-ghcr.io/dbcls/sparqlist}
+    volumes:
+      - ${REPOSITORY:-./repository}:/app/repository
+    ports:
+      - ${PORT:-3000}:3000
+    environment:
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-sercret}
+      SPARQLIST_TOGOMEDIUM_ENDPOINT: ${SPARQLIST_TOGOMEDIUM_ENDPOINT:-https://togomedium.org/sparql}
+    restart: always
