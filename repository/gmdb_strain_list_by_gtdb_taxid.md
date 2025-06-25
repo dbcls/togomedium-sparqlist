@@ -25,16 +25,14 @@ PREFIX taxid: <http://identifiers.org/taxonomy/>
 PREFIX gtdb: <http://identifiers.org/gtdb/>
 
 SELECT (COUNT(DISTINCT ?strain) AS ?total)  ?limit ?offset
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://togohmedium.org/gtdb/filterd_has_strain>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
+FROM <http://togomedium.org/gtdb/filtered_has_strain>
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/strain>
 WHERE {
  {
   SELECT DISTINCT ?ncbi_tax_id
-  FROM <http://togohmedium.org/gtdb/filterd_has_strain>
+  FROM <http://togomedium.org/gtdb/filtered_has_strain>
   {
     VALUES ?taxon_type { ddbj-tax:Taxon gtdb:Taxon }
     ?search_gtdb_id dcterms:identifier "{{tax_id}}" ;
@@ -74,16 +72,14 @@ PREFIX gtdb: <http://identifiers.org/gtdb/>
 
 SELECT DISTINCT ?strain_id ?strain_name
  (GROUP_CONCAT(DISTINCT ?original_strain_id; SEPARATOR = ", ") AS ?original_strain_ids)
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain>
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023>
-FROM <http://togohmedium.org/gtdb/filterd_has_strain>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
+FROM <http://togomedium.org/gtdb/filtered_has_strain>
 FROM <http://togomedium.org/media>
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/strain>
 WHERE {
  {
   SELECT DISTINCT ?ncbi_tax_id
-  FROM <http://togohmedium.org/gtdb/filterd_has_strain>
+  FROM <http://togomedium.org/gtdb/filtered_has_strain>
   {
     VALUES ?taxon_type { ddbj-tax:Taxon gtdb:Taxon }
     ?search_gtdb_id dcterms:identifier "{{tax_id}}" ;

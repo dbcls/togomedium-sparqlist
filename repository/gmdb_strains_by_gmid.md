@@ -29,9 +29,8 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT (DISTINCT ?strain) AS ?total) ?limit ?offset
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
+FROM <http://togomedium.org/strain>
 FROM <http://togomedium.org/media>
 WHERE {
   ?medium_id (dcterms:identifier | skos:altLabel) "{{gm_id}}" ;
@@ -64,9 +63,8 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT ?strain_id ?strain_name ?tax_id ?tax_name
   (GROUP_CONCAT(DISTINCT ?original_strain_id; SEPARATOR = ", ") AS ?original_strain_ids)
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
+FROM <http://togomedium.org/strain>
 FROM <http://togomedium.org/media>
 {
   ?medium_id (dcterms:identifier | skos:altLabel) "{{gm_id}}" ;

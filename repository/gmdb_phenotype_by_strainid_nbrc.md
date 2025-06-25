@@ -23,16 +23,15 @@ prefix prov:    <http://www.w3.org/ns/prov#>
 prefix mpo: <http://purl.jp/bio/10/mpo#>
 
 SELECT (COUNT(?phenotype) AS ?total) ?limit ?offset
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
-FROM <http://growthmedium.org/mpo/v0.74>
+FROM <http://togomedium.org/strain>
+FROM <http://togomedium.org/mpo>
 {
   <http://togomedium.org/strain/{{strain_id}}>  sio:SIO_001279 ?phenotype .
   ?phenotype rdf:type prov:Entity ;
     prov:hadPrimarySource ?source_uri ;
     rdfs:label ?source_label ;
     ?phenotype_property ?phenotype_value .
-  GRAPH <http://growthmedium.org/mpo/v0.74>
+  GRAPH <http://togomedium.org/mpo>
   {
      ?phenotype_property rdf:type ?property_type ;
        rdfs:label ?property_label .
@@ -56,23 +55,22 @@ prefix mpo: <http://purl.jp/bio/10/mpo#>
 SELECT DISTINCT ?source_uri ?source_label
   ?phenotype_property ?property_type ?property_label
   ?phenotype_value ?value_type ?value_label
-FROM <http://growthmedium.org/strain/2023>
-FROM <http://growthmedium.org/strain/2024>
-FROM <http://growthmedium.org/mpo/v0.74>
+FROM <http://togomedium.org/strain>
+FROM <http://togomedium.org/mpo>
 WHERE {
   <http://togomedium.org/strain/{{strain_id}}>  sio:SIO_001279 ?phenotype .
   ?phenotype rdf:type prov:Entity ;
     prov:hadPrimarySource ?source_uri ;
     rdfs:label ?source_label ;
     ?phenotype_property ?phenotype_value .
-  GRAPH <http://growthmedium.org/mpo/v0.74>
+  GRAPH <http://togomedium.org/mpo>
   {
      ?phenotype_property rdf:type ?property_type ;
        rdfs:label ?property_label .
      FILTER (lang(?property_label) = 'en')
   }
   OPTIONAL {
-    GRAPH <http://growthmedium.org/mpo/v0.74>
+    GRAPH <http://togomedium.org/mpo>
     {
       ?phenotype_value rdf:type ?value_type ;
         rdfs:label ?value_label .

@@ -21,7 +21,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT DISTINCT ?tax_id ?scientific_name ?rank 
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 WHERE {
   ?tax_id a taxont:Taxon ;
     taxont:scientificName ?scientific_name .

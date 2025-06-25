@@ -19,7 +19,7 @@ PREFIX taxo: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxid: <http://identifiers.org/taxonomy/>
 
 SELECT  DISTINCT ?tax ?name ?rank ?depth
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 WHERE {
   {
     SELECT DISTINCT ?tax COUNT(?ancestor_tax_id) AS ?depth

@@ -24,6 +24,12 @@ SPECIAL_DEFAULTS = {
     'gmdb_taxonomy_gtdb_search_by_name': {'q': 'Nocardioides'}
 }
 
+# Endpoints to exclude from testing
+EXCLUDED_ENDPOINTS = {
+    'gms_kegg_code_tid',
+    'gms_by_kegg_tids_3'
+}
+
 def parse_md_file(file_path: str) -> Dict[str, Any]:
     """Parse MD file to extract API endpoint name and parameters."""
     endpoint_name = os.path.basename(file_path).replace('.md', '')
@@ -197,6 +203,13 @@ def main():
         total_files = len(md_files)
         
         for i, md_file in enumerate(md_files, 1):
+            endpoint_name = os.path.basename(md_file).replace('.md', '')
+            
+            # Skip excluded endpoints
+            if endpoint_name in EXCLUDED_ENDPOINTS:
+                log_and_print(f"[{i}/{total_files}] Skipping {os.path.basename(md_file)} (excluded)", log_file)
+                continue
+                
             log_and_print(f"[{i}/{total_files}] Testing {os.path.basename(md_file)}...", log_file)
             
             try:

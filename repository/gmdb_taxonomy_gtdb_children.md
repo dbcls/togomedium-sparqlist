@@ -20,7 +20,7 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX gtdb: <http://identifiers.org/gtdb/>
 
 SELECT  DISTINCT ?tax ?name ?rank
-FROM <http://togohmedium.org/gtdb/filterd_has_strain>
+FROM <http://togomedium.org/gtdb/filtered_has_strain>
 WHERE {
   VALUES ?taxon_type { ddbj-tax:Taxon gtdb:Taxon }
   ?search_gtdb_id dcterms:identifier "{{tax_id}}" ;

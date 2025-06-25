@@ -23,7 +23,7 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 
 SELECT DISTINCT *
-FROM <http://ddbj.nig.ac.jp/ontologies/taxonomy/filtered_has_strain/2023> 
+FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 WHERE {
   taxid:{{tax_id}} dcterms:identifier ?taxid ;
     ddbj-tax:rank ?rank ;
