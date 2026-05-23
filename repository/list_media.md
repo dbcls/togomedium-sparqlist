@@ -28,7 +28,6 @@ FROM <http://togomedium.org/media>
 WHERE {
   ?medium_uri a gmo:GMO_000001 ;
     dcterms:identifier ?media_id ;
-    skos:altLabel ?original_media_id ;
     rdfs:label ?label ;
     olo:length ?paragraph_length .
   FILTER (?paragraph_length > 0)
@@ -51,10 +50,12 @@ FROM <http://togomedium.org/media>
 WHERE {
   ?medium_uri a gmo:GMO_000001 ;
     dcterms:identifier ?media_id ;
-    skos:altLabel ?original_media_id ;
     rdfs:label ?media_name ;
     olo:length ?paragraph_length .
   FILTER (?paragraph_length > 0)
+  OPTIONAL {
+    ?medium_uri skos:altLabel ?original_media_id .
+  }
   OPTIONAL {
     ?medium_uri gmo:GMO_000108 ?source_uri .
   }
@@ -98,7 +99,7 @@ OFFSET {{offset}}
       .map((r) => parseSparqlObject(r))
       .map((item) => ({
         [KEY_Label]: !!item.label ? item.label : "",
-        [KEY_ORGINAL_GM_ID]: item.original_media_id,
+        [KEY_ORGINAL_GM_ID]: item.original_media_id ?? "",
         [KEY_GM_ID]: {
           label: item.media_id,
           href: `/medium/${item.media_id}`,

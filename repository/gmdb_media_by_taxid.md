@@ -38,8 +38,8 @@ WHERE {
   ?medium gmo:GMO_000114 ?culture_for ;
     rdf:type  gmo:GMO_000001 ; #exist media
     rdfs:label ?label ;
-    dcterms:identifier ?media_id ;
-    skos:altLabel ?original_media_id .
+    dcterms:identifier ?media_id .
+  OPTIONAL { ?medium skos:altLabel ?original_media_id . }
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
@@ -69,8 +69,8 @@ WHERE {
   ?medium gmo:GMO_000114 ?culture_for ;
     rdf:type  gmo:GMO_000001 ; #exist media
     rdfs:label ?media_name ;
-    dcterms:identifier ?media_id ;
-    skos:altLabel ?original_media_id .
+    dcterms:identifier ?media_id .
+  OPTIONAL { ?medium skos:altLabel ?original_media_id . }
   BIND (if(STR(?media_name) = "", "(Unnamed medium)", ?media_name) AS ?label)
 }
 LIMIT {{limit}}
@@ -110,7 +110,7 @@ OFFSET {{offset}}
       .map((r) => parseSparqlObject(r))
       .map((item) => ({
         [KEY_NAME]: !!item.label ? item.label : "",
-        [KEY_ORGINAL_GM_ID]: item.original_media_id,
+        [KEY_ORGINAL_GM_ID]: item.original_media_id ?? "",
         [KEY_GM_ID]: {
           label: item.media_id,
           href: `/medium/${item.media_id}`,

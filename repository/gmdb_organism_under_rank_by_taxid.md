@@ -66,22 +66,25 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT (COUNT(DISTINCT ?child_tax) AS ?total) ?limit ?offset
-FROM <http://togomedium.org/taxonomy/filtered_has_strain>
-FROM <http://togomedium.org/strain>
-FROM <http://togomedium.org/media>
 WHERE {
-  VALUES ?tax_id { {{tax_id}} }
-  ?search_tax a taxont:Taxon ;
-    dcterms:identifier ?tax_id .
-  ?child_tax rdfs:subClassOf* ?search_tax ;
-    dcterms:identifier ?child_tax_id ;
-    rdfs:label ?child_tax_name ;
-    taxont:rank {{rank_pettern}} .
-  ?descent_tax rdfs:subClassOf+ ?search_tax .
-  ?strain gmo:taxon ?descent_tax .
-  ?culture_for gmo:strain_id ?strain .
-  ?medium gmo:GMO_000114 ?culture_for ;
-    rdf:type  gmo:GMO_000001 . #exist media
+  GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
+    VALUES ?tax_id { {{tax_id}} }
+    ?search_tax a taxont:Taxon ;
+      dcterms:identifier ?tax_id .
+    ?child_tax rdfs:subClassOf* ?search_tax ;
+      dcterms:identifier ?child_tax_id ;
+      rdfs:label ?child_tax_name ;
+      taxont:rank {{rank_pettern}} .
+    ?descent_tax rdfs:subClassOf+ ?search_tax .
+  }
+  GRAPH <http://togomedium.org/strain> {
+    ?strain gmo:taxon ?descent_tax .
+    ?culture_for gmo:strain_id ?strain .
+    ?medium gmo:GMO_000114 ?culture_for .
+  }
+  GRAPH <http://togomedium.org/media> {
+    ?medium rdf:type  gmo:GMO_000001 . #exist media
+  }
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
@@ -96,24 +99,27 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 
 SELECT ?child_tax_id ?child_tax_name ?rank_name COUNT(DISTINCT ?medium) AS ?num_of_media
-FROM <http://togomedium.org/taxonomy/filtered_has_strain>
-FROM <http://togomedium.org/strain>
-FROM <http://togomedium.org/media>
 WHERE {
-  VALUES ?tax_id { {{tax_id}} }
-  ?search_tax a taxont:Taxon ;
-     dcterms:identifier ?tax_id .
-  ?child_tax rdfs:subClassOf+ ?search_tax ;
-    dcterms:identifier ?child_tax_id ;
-    rdfs:label ?child_tax_name ;
-    taxont:rank {{rank_pettern}} ;
-    taxont:rank/rdfs:label ?rank_name .
-  OPTIONAL {
-    ?descent_tax rdfs:subClassOf* ?child_tax .
-    ?strain gmo:taxon ?descent_tax .
-    ?culture_for gmo:strain_id ?strain .
-    ?medium gmo:GMO_000114 ?culture_for ;
-      rdf:type  gmo:GMO_000001 . #exist media
+  GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
+    VALUES ?tax_id { {{tax_id}} }
+    ?search_tax a taxont:Taxon ;
+       dcterms:identifier ?tax_id .
+    ?child_tax rdfs:subClassOf+ ?search_tax ;
+      dcterms:identifier ?child_tax_id ;
+      rdfs:label ?child_tax_name ;
+      taxont:rank {{rank_pettern}} ;
+      taxont:rank/rdfs:label ?rank_name .
+    OPTIONAL {
+      ?descent_tax rdfs:subClassOf* ?child_tax .
+      GRAPH <http://togomedium.org/strain> {
+        ?strain gmo:taxon ?descent_tax .
+        ?culture_for gmo:strain_id ?strain .
+        ?medium gmo:GMO_000114 ?culture_for .
+      }
+      GRAPH <http://togomedium.org/media> {
+        ?medium rdf:type  gmo:GMO_000001 . #exist media
+      }
+    }
   }
 }
 GROUP BY  ?child_tax_id ?child_tax_name ?rank_name

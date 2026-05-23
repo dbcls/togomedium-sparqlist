@@ -46,8 +46,8 @@ WHERE {
   VALUES ?medium_no { {{media_values}} }
   ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
     dcterms:identifier ?medium_id ;
-    skos:altLabel ?original_media_id ;
     rdfs:label ?name .
+  OPTIONAL { ?medium skos:altLabel ?original_media_id . }
   ?medium gmo:included_component ?gmo_id .
   ?gmo_id rdfs:label ?gmo_label .
   FILTER (lang(?gmo_label) = 'en')
@@ -126,7 +126,7 @@ WHERE {
       let media_name = "";
       let hit_media = medium_component_list.find((row) => row["medium_id"]["value"] == medium_id);
       media_info["name"] = hit_media["medium_name"]["value"];
-      media_info["original_media_id"] = hit_media["original_media_id"]["value"];
+      media_info["original_media_id"] = hit_media["original_media_id"]?.["value"] ?? "";
       medium_component_list.forEach((row) => {
         if (row["medium_id"]["value"] == medium_id) {
           component_list.push(row["gmo_id"]["value"].split("/").pop());

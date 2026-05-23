@@ -25,10 +25,6 @@ PREFIX taxid: <http://identifiers.org/taxonomy/>
 PREFIX gtdb: <http://identifiers.org/gtdb/>
 
 SELECT (COUNT(DISTINCT ?strain) AS ?total)  ?limit ?offset
-FROM <http://togomedium.org/taxonomy/filtered_has_strain>
-FROM <http://togomedium.org/gtdb/filtered_has_strain>
-FROM <http://togomedium.org/media>
-FROM <http://togomedium.org/strain>
 WHERE {
  {
   SELECT DISTINCT ?ncbi_tax_id
@@ -41,21 +37,27 @@ WHERE {
      rdfs:seeAlso ?ncbi_tax_id .
   }
  }
- ?ncbi_tax_id rdf:type ddbj-tax:Taxon .
- ?infraxpecific_tax rdfs:subClassOf* ?ncbi_tax_id .
- ?infraxpecific_tax ddbj-tax:rank ddbj-tax:Species .
- ?tax rdfs:subClassOf* ?infraxpecific_tax .
- ?strain gmo:taxon ?tax ;
-    rdfs:label ?strain_name ;
-    dcterms:identifier ?strain_id ;
-    gmo:origin_strain/dcterms:identifier ?original_strain_id .
-  ?culture_for gmo:strain_id ?strain .
-  ?medium gmo:GMO_000114 ?culture_for ;
-    rdf:type  gmo:GMO_000001 . #exist media
-  ?tax ddbj-tax:scientificName ?name .
-  FILTER(!REGEX(?name, "Candidatus"))
-  BIND("{{limit}}" AS ?limit)
-  BIND("{{offset}}" AS ?offset)
+ GRAPH  <http://togomedium.org/taxonomy/filtered_has_strain> {
+   ?ncbi_tax_id rdf:type ddbj-tax:Taxon .
+   ?infraxpecific_tax rdfs:subClassOf* ?ncbi_tax_id .
+   ?infraxpecific_tax ddbj-tax:rank ddbj-tax:Species .
+   ?tax rdfs:subClassOf* ?infraxpecific_tax .
+   ?tax ddbj-tax:scientificName ?name .
+   FILTER(!REGEX(?name, "Candidatus"))
+ }
+ GRAPH  <http://togomedium.org/strain> {
+   ?strain gmo:taxon ?tax ;
+      rdfs:label ?strain_name ;
+      dcterms:identifier ?strain_id ;
+      gmo:origin_strain/dcterms:identifier ?original_strain_id .
+    ?culture_for gmo:strain_id ?strain .
+    ?medium gmo:GMO_000114 ?culture_for .
+ }
+ GRAPH  <http://togomedium.org/media> {
+  ?medium rdf:type  gmo:GMO_000001 . #exist media
+ }
+ BIND("{{limit}}" AS ?limit)
+ BIND("{{offset}}" AS ?offset)
 }
 ```
 
@@ -72,10 +74,6 @@ PREFIX gtdb: <http://identifiers.org/gtdb/>
 
 SELECT DISTINCT ?strain_id ?strain_name
  (GROUP_CONCAT(DISTINCT ?original_strain_id; SEPARATOR = ", ") AS ?original_strain_ids)
-FROM <http://togomedium.org/taxonomy/filtered_has_strain>
-FROM <http://togomedium.org/gtdb/filtered_has_strain>
-FROM <http://togomedium.org/media>
-FROM <http://togomedium.org/strain>
 WHERE {
  {
   SELECT DISTINCT ?ncbi_tax_id
@@ -88,19 +86,25 @@ WHERE {
      rdfs:seeAlso ?ncbi_tax_id .
   }
  }
- ?ncbi_tax_id rdf:type ddbj-tax:Taxon .
- ?infraxpecific_tax rdfs:subClassOf* ?ncbi_tax_id .
- ?infraxpecific_tax ddbj-tax:rank ddbj-tax:Species .
- ?tax rdfs:subClassOf* ?infraxpecific_tax .
- ?strain gmo:taxon ?tax ;
-    rdfs:label ?strain_name ;
+ GRAPH  <http://togomedium.org/taxonomy/filtered_has_strain> {
+   ?ncbi_tax_id rdf:type ddbj-tax:Taxon .
+   ?infraxpecific_tax rdfs:subClassOf* ?ncbi_tax_id .
+   ?infraxpecific_tax ddbj-tax:rank ddbj-tax:Species .
+   ?tax rdfs:subClassOf* ?infraxpecific_tax .
+   ?tax ddbj-tax:scientificName ?name .
+    FILTER(!REGEX(?name, "Candidatus"))
+ }
+ GRAPH  <http://togomedium.org/strain> {
+  ?strain gmo:taxon ?tax ;
+   rdfs:label ?strain_name ;
     dcterms:identifier ?strain_id ;
     gmo:origin_strain/dcterms:identifier ?original_strain_id .
-  ?culture_for gmo:strain_id ?strain .
-  ?medium gmo:GMO_000114 ?culture_for ;
-    rdf:type  gmo:GMO_000001 . #exist media
-  ?tax ddbj-tax:scientificName ?name .
-  FILTER(!REGEX(?name, "Candidatus"))
+   ?culture_for gmo:strain_id ?strain .
+   ?medium gmo:GMO_000114 ?culture_for .
+ }
+ GRAPH  <http://togomedium.org/media> {
+  ?medium rdf:type  gmo:GMO_000001 . #exist media
+ }
 } GROUP BY ?strain_id ?strain_name
 ORDER BY ?strain_name
 LIMIT {{limit}}

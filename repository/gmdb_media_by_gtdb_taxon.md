@@ -40,10 +40,6 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX gtdb: <http://identifiers.org/gtdb/>
 
 SELECT (COUNT(DISTINCT ?medium_id) AS ?total) ?limit ?offset
-FROM <http://togomedium.org/gtdb/filtered_has_strain>
-FROM <http://togomedium.org/taxonomy/filtered_has_strain>
-FROM <http://togomedium.org/media>
-FROM <http://togomedium.org/strain>
 WHERE {
  {
   SELECT DISTINCT ?ncbi_tax_id
@@ -56,18 +52,24 @@ WHERE {
     ?gtdb_id rdfs:subClassOf* ?search_gtdb_id ;
      rdfs:seeAlso ?ncbi_tax_id .
   }
-}
-  ?ncbi_tax_id rdf:type ddbj-tax:Taxon .
-  ?search_tax rdfs:subClassOf* ?ncbi_tax_id .
-  ?strain gmo:taxon ?search_tax ;
-    rdf:type sio:SIO_010055 .
-  ?culture_for gmo:strain_id ?strain .
-  ?medium_id gmo:GMO_000114 ?culture_for ;
-    rdf:type gmo:GMO_000001 ; #exist media
-    rdfs:label ?name ;
-    skos:altLabel ?original_media_id .
-  BIND("{{limit}}" AS ?limit)
-  BIND("{{offset}}" AS ?offset)
+ }
+ GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
+   ?ncbi_tax_id rdf:type ddbj-tax:Taxon .
+   ?search_tax rdfs:subClassOf* ?ncbi_tax_id .
+ }
+ GRAPH <http://togomedium.org/strain> {
+   ?strain gmo:taxon ?search_tax ;
+     rdf:type sio:SIO_010055 .
+   ?culture_for gmo:strain_id ?strain .
+   ?medium_id gmo:GMO_000114 ?culture_for .
+ }
+ GRAPH <http://togomedium.org/media> {
+     ?medium_id  rdf:type gmo:GMO_000001 ; #exist media
+     rdfs:label ?name .
+     OPTIONAL { ?medium_id skos:altLabel ?original_media_id . }
+ }
+ BIND("{{limit}}" AS ?limit)
+ BIND("{{offset}}" AS ?offset)
 }
 ```
 
@@ -85,10 +87,6 @@ PREFIX gmo: <http://purl.jp/bio/10/gmo/>
 PREFIX gtdb: <http://identifiers.org/gtdb/>
 
 SELECT DISTINCT ?medium_id ?medium_name ?original_media_id
-FROM <http://togomedium.org/taxonomy/filtered_has_strain>
-FROM <http://togomedium.org/gtdb/filtered_has_strain>
-FROM <http://togomedium.org/media>
-FROM <http://togomedium.org/strain>
 WHERE {
  {
   SELECT DISTINCT ?ncbi_tax_id
@@ -101,17 +99,23 @@ WHERE {
     ?gtdb_id rdfs:subClassOf* ?search_gtdb_id ;
      rdfs:seeAlso ?ncbi_tax_id .
   }
-}
+ }
+ GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
   ?ncbi_tax_id rdf:type ddbj-tax:Taxon .
   ?search_tax rdfs:subClassOf* ?ncbi_tax_id .
+ }
+ GRAPH <http://togomedium.org/strain> {
   ?strain gmo:taxon ?search_tax ;
     rdf:type sio:SIO_010055 .
   ?culture_for gmo:strain_id ?strain .
-  ?medium_id gmo:GMO_000114 ?culture_for ;
-    rdf:type gmo:GMO_000001 ; #exist media
-    rdfs:label ?name ;
-    skos:altLabel ?original_media_id .
+  ?medium_id gmo:GMO_000114 ?culture_for .
+ }
+ GRAPH <http://togomedium.org/media> {
+  ?medium_id rdf:type gmo:GMO_000001 ; #exist media
+    rdfs:label ?name .
+  OPTIONAL { ?medium_id skos:altLabel ?original_media_id . }
   BIND (if(STR(?name) = "", "(Unnamed medium)", ?name) AS ?medium_name)
+ }
 }
 LIMIT {{limit}}
 OFFSET {{offset}}
@@ -130,7 +134,7 @@ OFFSET {{offset}}
     let rows = result.results.bindings;
     let contents = rows.map((row) => {
       let medium_id = row["medium_id"]["value"].split("/").pop();
-      return {"gm_id": medium_id, "name": row["medium_name"]["value"], "original_media_id": row["original_media_id"]["value"]};
+      return {"gm_id": medium_id, "name": row["medium_name"]["value"], "original_media_id": row["original_media_id"]?.["value"] ?? ""};
     });
     return {"total": total, "offset": offset, "limit": limit, "contents": contents};
   }
