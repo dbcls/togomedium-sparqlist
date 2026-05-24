@@ -97,7 +97,7 @@ WHERE {
     if (organism === null) {
       return null;
     }
-    const rank_list = ["superkingdom" , "phylum", "class", "order", "family", "genus", "species"]
+    const rank_list = ["domain" , "phylum", "class", "order", "family", "genus", "species"]
     let lineage_list = lineage.results.bindings.map((obj) => parseSparqlObject(obj));
     organism.lineage = [];
     rank_list.forEach((rank) => {

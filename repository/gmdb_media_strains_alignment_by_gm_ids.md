@@ -34,7 +34,7 @@ FROM <http://togomedium.org/strain>
 FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 WHERE {
   VALUES ?medium_no { {{media_values}} }
-  VALUES ?rank { tax:Superkingdom  tax:Phylum tax:Class tax:Order tax:Family tax:Genus tax:Species }
+  VALUES ?rank { tax:Domain tax:Phylum tax:Class tax:Order tax:Family tax:Genus tax:Species }
   ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
     dcterms:identifier ?medium_id ;
     rdfs:label ?name ;
@@ -56,7 +56,7 @@ WHERE {
 ```javascript
 ({
   json({result}) {
-    const lineageRanks = ["superkingdom","phylum","class","order","family","genus","species","strain"];
+    const lineageRanks = ["domain","phylum","class","order","family","genus","species","strain"];
     const output = [];
     result.results.bindings.forEach(row => {
         const existingMedium = output.find(item => item.gm_id === row.medium_id.value);

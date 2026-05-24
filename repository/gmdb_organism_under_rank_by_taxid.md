@@ -41,7 +41,7 @@ WHERE {
     if (rows.length == 0){
       return null;
     }
-    const rank_list = ["Superkingdom" , "Phylum", "Class", "Order", "Family", "Genus", "Species" ]
+    const rank_list = ["Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species" ]
     let index_list = rows.map((row) => {
       return rank_list.findIndex( (rank) => rank === row.rank.value.split('/').pop());
     });
