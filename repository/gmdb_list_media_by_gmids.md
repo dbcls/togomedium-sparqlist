@@ -43,7 +43,6 @@ WHERE {
   ?medium_uri (dcterms:identifier | skos:altLabel) ?medium_no ;
     rdf:type gmo:GMO_000001 ;
     dcterms:identifier ?media_id ;
-    skos:altLabel ?original_media_id ;
     rdfs:label ?media_name .
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
@@ -65,8 +64,10 @@ WHERE {
   ?medium_uri (dcterms:identifier | skos:altLabel) ?medium_no ;
     rdf:type gmo:GMO_000001 ;
     dcterms:identifier ?media_id ;
-    skos:altLabel ?original_media_id ;
     rdfs:label ?name .
+  OPTIONAL {
+    ?medium_uri skos:altLabel ?original_media_id .
+  }
   BIND (if(STR(?name) = "", "(Unnamed medium)", ?name) AS ?media_name)
 }
 ```
@@ -93,7 +94,7 @@ WHERE {
       gms.contents.push({
         media_id: {label: rows[i].media_id.value,
                 href: "/medium/" + rows[i].media_id.value},
-        original_media_id: rows[i].original_media_id.value,
+        original_media_id: rows[i].original_media_id?.value ?? "",
         media_name: rows[i].media_name.value
       });
     }

@@ -7,6 +7,7 @@ Tests all API endpoints by parsing MD files in the repository directory.
 import os
 import re
 import json
+import time
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -109,20 +110,23 @@ def test_api_endpoint(base_url: str, endpoint_info: Dict[str, Any]) -> Dict[str,
     parameters = endpoint_info['parameters']
     
     url = build_api_url(base_url, endpoint, parameters)
-    
+
+    start_time = time.monotonic()
     try:
         with urllib.request.urlopen(url, timeout=30) as response:
             content = response.read().decode('utf-8')
-            
+        elapsed = time.monotonic() - start_time
+
         # Parse JSON response
         try:
             json_data = json.loads(content)
             analysis = analyze_json_response(json_data)
-            
+
             return {
                 'endpoint': endpoint,
                 'url': url,
                 'status': 'success',
+                'elapsed': elapsed,
                 'response_analysis': analysis
             }
         except json.JSONDecodeError as e:
@@ -130,15 +134,17 @@ def test_api_endpoint(base_url: str, endpoint_info: Dict[str, Any]) -> Dict[str,
                 'endpoint': endpoint,
                 'url': url,
                 'status': 'json_error',
+                'elapsed': elapsed,
                 'error': f"JSON decode error: {str(e)}",
                 'raw_content': content[:200] + '...' if len(content) > 200 else content
             }
-            
+
     except urllib.error.HTTPError as e:
         return {
             'endpoint': endpoint,
             'url': url,
             'status': 'http_error',
+            'elapsed': time.monotonic() - start_time,
             'error': f"HTTP {e.code}: {e.reason}"
         }
     except urllib.error.URLError as e:
@@ -146,6 +152,7 @@ def test_api_endpoint(base_url: str, endpoint_info: Dict[str, Any]) -> Dict[str,
             'endpoint': endpoint,
             'url': url,
             'status': 'connection_error',
+            'elapsed': time.monotonic() - start_time,
             'error': f"Connection error: {str(e)}"
         }
     except Exception as e:
@@ -153,6 +160,7 @@ def test_api_endpoint(base_url: str, endpoint_info: Dict[str, Any]) -> Dict[str,
             'endpoint': endpoint,
             'url': url,
             'status': 'error',
+            'elapsed': time.monotonic() - start_time,
             'error': f"Unexpected error: {str(e)}"
         }
 
@@ -201,40 +209,43 @@ def main():
         
         results = []
         total_files = len(md_files)
-        
+        overall_start = time.monotonic()
+
         for i, md_file in enumerate(md_files, 1):
             endpoint_name = os.path.basename(md_file).replace('.md', '')
-            
+
             # Skip excluded endpoints
             if endpoint_name in EXCLUDED_ENDPOINTS:
                 log_and_print(f"[{i}/{total_files}] Skipping {os.path.basename(md_file)} (excluded)", log_file)
                 continue
-                
+
             log_and_print(f"[{i}/{total_files}] Testing {os.path.basename(md_file)}...", log_file)
-            
+
             try:
                 endpoint_info = parse_md_file(md_file)
                 result = test_api_endpoint(base_url, endpoint_info)
                 results.append(result)
-                
+
+                elapsed_str = f" [{result['elapsed']:.2f}s]" if 'elapsed' in result else ""
+
                 # Print result summary
                 if result['status'] == 'success':
                     analysis = result['response_analysis']
                     if analysis['type'] == 'array':
                         if analysis['array_type'] == 'objects':
-                            log_and_print(f"  ✓ Success: Array with {analysis['count']} items", log_file)
+                            log_and_print(f"  ✓ Success{elapsed_str}: Array with {analysis['count']} items", log_file)
                             if analysis.get('first_item_keys'):
                                 log_and_print(f"    First item keys: {', '.join(analysis['first_item_keys'])}", log_file)
                         else:
-                            log_and_print(f"  ✓ Success: Simple array with {analysis['count']} items", log_file)
+                            log_and_print(f"  ✓ Success{elapsed_str}: Simple array with {analysis['count']} items", log_file)
                     elif analysis['type'] == 'object':
                         total_info = f" (total: {analysis['total']})" if 'total' in analysis else ""
-                        log_and_print(f"  ✓ Success: Object with keys: {', '.join(analysis['keys'])}{total_info}", log_file)
+                        log_and_print(f"  ✓ Success{elapsed_str}: Object with keys: {', '.join(analysis['keys'])}{total_info}", log_file)
                     else:
-                        log_and_print(f"  ✓ Success: {analysis['type']} - {analysis.get('value', '')}", log_file)
+                        log_and_print(f"  ✓ Success{elapsed_str}: {analysis['type']} - {analysis.get('value', '')}", log_file)
                 else:
-                    log_and_print(f"  ✗ Failed: {result['error']}", log_file)
-                    
+                    log_and_print(f"  ✗ Failed{elapsed_str}: {result['error']}", log_file)
+
             except Exception as e:
                 log_and_print(f"  ✗ Error parsing file: {str(e)}", log_file)
                 results.append({
@@ -242,6 +253,8 @@ def main():
                     'status': 'parse_error',
                     'error': str(e)
                 })
+
+        overall_elapsed = time.monotonic() - overall_start
         
         # Summary
         log_and_print("\n" + "=" * 60, log_file)
@@ -250,11 +263,27 @@ def main():
         
         success_count = sum(1 for r in results if r['status'] == 'success')
         total_count = len(results)
-        
+        elapsed_values = [r['elapsed'] for r in results if 'elapsed' in r]
+
         log_and_print(f"Total endpoints tested: {total_count}", log_file)
         log_and_print(f"Successful: {success_count}", log_file)
         log_and_print(f"Failed: {total_count - success_count}", log_file)
-        
+        log_and_print(f"Total elapsed time: {overall_elapsed:.2f}s", log_file)
+        if elapsed_values:
+            avg_elapsed = sum(elapsed_values) / len(elapsed_values)
+            log_and_print(f"Average per endpoint: {avg_elapsed:.2f}s", log_file)
+
+            # Top 5 slowest endpoints
+            slowest = sorted(
+                (r for r in results if 'elapsed' in r),
+                key=lambda r: r['elapsed'],
+                reverse=True
+            )[:5]
+            if slowest:
+                log_and_print("\nSlowest endpoints (top 5):", log_file)
+                for r in slowest:
+                    log_and_print(f"  - {r['endpoint']}: {r['elapsed']:.2f}s", log_file)
+
         if total_count - success_count > 0:
             log_and_print("\nFailed endpoints:", log_file)
             for result in results:
@@ -270,6 +299,8 @@ def main():
             log_file.write(f"\nEndpoint: {result['endpoint']}\n")
             log_file.write(f"Status: {result['status']}\n")
             log_file.write(f"URL: {result.get('url', 'N/A')}\n")
+            if 'elapsed' in result:
+                log_file.write(f"Elapsed: {result['elapsed']:.2f}s\n")
             
             if result['status'] == 'success':
                 analysis = result['response_analysis']

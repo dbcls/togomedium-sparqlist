@@ -33,8 +33,8 @@ FROM <http://togomedium.org/strain>
 FROM <http://togomedium.org/gmo>
 WHERE {
   ?medium_uri a gmo:GMO_000001 ;
-    dcterms:identifier ?media_id ;
-    skos:altLabel ?original_media_id .
+    dcterms:identifier ?media_id .
+  OPTIONAL { ?medium_uri skos:altLabel ?original_media_id . }
   {
     ?medium_uri rdfs:label ?label
     FILTER(REGEX(?label, "{{keyword}}", "i"))
@@ -72,8 +72,8 @@ FROM <http://togomedium.org/strain>
 FROM <http://togomedium.org/gmo>
 WHERE {
   ?medium_uri a gmo:GMO_000001 ;
-    dcterms:identifier ?media_id ;
-    skos:altLabel ?original_media_id .
+    dcterms:identifier ?media_id .
+  OPTIONAL { ?medium_uri skos:altLabel ?original_media_id . }
   {
     ?medium_uri rdfs:label ?label .
     FILTER(REGEX(?label, "{{keyword}}", "i"))

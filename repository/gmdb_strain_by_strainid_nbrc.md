@@ -131,7 +131,7 @@ WHERE {
     }
     let organism = parseSparqlObject(tax_name.results.bindings[0]);
     organism["rank"] = organism["rank"].charAt(0).toUpperCase() + organism["rank"].slice(1).toLowerCase(); // capitalize
-    const rank_list = ["superkingdom" , "phylum", "class", "order", "family", "genus", "species"] // "strain"を持つデータは無し
+    const rank_list = ["domain", "phylum", "class", "order", "family", "genus", "species"] // "strain"を持つデータは無し
     let lineage_list = lineage.results.bindings.map((obj) => parseSparqlObject(obj));
     organism.lineage = [];
     rank_list.forEach((rank) => {

@@ -12,23 +12,28 @@
 ## `taxonomy_list` count results
 
 ```sparql
+DEFINE sql:select-option "order"
 PREFIX pathway: <http://togomedium.org/pathway/>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
-SELECT DISTINCT ?ancestor_tax AS ?id ?label ?parent COUNT(?pathway) AS ?count
-FROM <http://togomedium.org/pathway>
-FROM <http://togomedium.org/taxonomy/filtered_has_pathway>
+SELECT DISTINCT ?ancestor_tax AS ?id ?label ?parent COUNT(?pathway) AS ?count 
 {
   {{#if pathway_id}}
-  pathway:{{pathway_id}} obo:RO_0002175 ?tax_id .
+  GRAPH <http://togomedium.org/pathway> {
+    pathway:{{pathway_id}} obo:RO_0002175 ?tax_id .
+  }
   {{/if}}
-  ?tax_id a ddbj-tax:Taxon ;
-    rdfs:subClassOf* ?ancestor_tax  .
-  ?ancestor_tax rdfs:label ?label .
-  ?ancestor_tax rdfs:subClassOf ?parent .
-  OPTIONAL {
-    ?pathway obo:RO_0002175 ?ancestor_tax .
+  GRAPH <http://togomedium.org/taxonomy/filtered_has_pathway> {
+    ?tax_id a ddbj-tax:Taxon ;
+      rdfs:subClassOf* ?ancestor_tax  .
+    ?ancestor_tax rdfs:label ?label .
+    ?ancestor_tax rdfs:subClassOf ?parent .
+    OPTIONAL {
+      GRAPH <http://togomedium.org/pathway> {
+        ?pathway obo:RO_0002175 ?ancestor_tax .
+      }
+    }
   }
 }
 ```

@@ -32,8 +32,8 @@ WHERE {
   ?gmo dcterms:identifier "{{gmo_id}}" .
   ?medium olo:slot/olo:item/gmo:has_component/gmo:gmo_id ?gmo .
   ?medium dcterms:identifier ?media_id ;
-    skos:altLabel ?orignal_media_id ;
     rdfs:label ?label .
+  OPTIONAL { ?medium skos:altLabel ?orignal_media_id . }
   BIND("{{limit}}" AS ?limit)
   BIND("{{offset}}" AS ?offset)
 }
@@ -55,8 +55,8 @@ WHERE {
   ?gmo dcterms:identifier "{{gmo_id}}" .
   ?medium olo:slot/olo:item/gmo:has_component/gmo:gmo_id ?gmo .
   ?medium dcterms:identifier ?media_id ;
-    skos:altLabel ?original_media_id ;
     rdfs:label ?media_name .
+  OPTIONAL { ?medium skos:altLabel ?original_media_id . }
   BIND (if(STR(?media_name) = "", "(Unnamed medium)", ?media_name) AS ?label)
 
 }
@@ -86,7 +86,7 @@ OFFSET {{offset}}
       media.contents.push({
         media_id: {label: rows[i].media_id.value,
                 href: "/medium/" + rows[i].media_id.value},
-        original_media_id: rows[i].original_media_id.value,
+        original_media_id: rows[i].original_media_id?.value ?? "",
         name: rows[i].label.value
       });
     }

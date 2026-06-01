@@ -29,22 +29,25 @@ PREFIX ddbj-tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 
 
 SELECT  DISTINCT ?tax ?name
-FROM <http://togomedium.org/taxonomy/filtered_has_strain>
-FROM <http://togomedium.org/media>
-FROM <http://togomedium.org/strain>
 WHERE {
-  VALUES ?search_tax_id { taxid:{{tax_id}} }
-  ?search_tax_id rdf:type ddbj-tax:Taxon .
-  ?tax rdfs:subClassOf* ?search_tax_id .
-  ?tax ddbj-tax:rank ddbj-tax:{{rank}} .
-  ?medium_tax rdfs:subClassOf* ?tax .
-  ?strain gmo:taxon ?medium_tax ;
-    rdf:type sio:SIO_010055 .
-  ?culture_for gmo:strain_id ?strain .
-  ?medium_uri gmo:GMO_000114 ?culture_for ;
-    rdf:type gmo:GMO_000001 . #exist media
-  ?tax ddbj-tax:scientificName ?name .
-  FILTER(!REGEX(?name, "Candidatus"))
+  GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
+    VALUES ?search_tax_id { taxid:{{tax_id}} }
+    ?search_tax_id rdf:type ddbj-tax:Taxon .
+    ?tax rdfs:subClassOf* ?search_tax_id .
+    ?tax ddbj-tax:rank ddbj-tax:{{rank}} .
+    ?medium_tax rdfs:subClassOf* ?tax .
+    ?tax ddbj-tax:scientificName ?name .
+    FILTER(!REGEX(?name, "Candidatus"))
+  }
+  GRAPH <http://togomedium.org/strain> {
+    ?strain gmo:taxon ?medium_tax ;
+      rdf:type sio:SIO_010055 .
+    ?culture_for gmo:strain_id ?strain .
+    ?medium_uri gmo:GMO_000114 ?culture_for .
+  }
+  GRAPH <http://togomedium.org/media> {
+   ?media rdf:type gmo:GMO_000001 . #exist media
+  } 
 } LIMIT 9999
 ```
 

@@ -34,12 +34,12 @@ FROM <http://togomedium.org/strain>
 FROM <http://togomedium.org/taxonomy/filtered_has_strain>
 WHERE {
   VALUES ?medium_no { {{media_values}} }
-  VALUES ?rank { tax:Superkingdom  tax:Phylum tax:Class tax:Order tax:Family tax:Genus tax:Species }
+  VALUES ?rank { tax:Domain tax:Phylum tax:Class tax:Order tax:Family tax:Genus tax:Species }
   ?medium (dcterms:identifier | skos:altLabel) ?medium_no ;
     dcterms:identifier ?medium_id ;
-    skos:altLabel ?original_media_id ;
     rdfs:label ?name ;
     gmo:GMO_000114/gmo:strain_id ?strain .
+  OPTIONAL { ?medium skos:altLabel ?original_media_id . }
   ?strain a sio:SIO_010055 ;
     rdfs:label ?strain_name ;
     dcterms:identifier ?strain_id ;
@@ -56,7 +56,7 @@ WHERE {
 ```javascript
 ({
   json({result}) {
-    const lineageRanks = ["superkingdom","phylum","class","order","family","genus","species","strain"];
+    const lineageRanks = ["domain","phylum","class","order","family","genus","species","strain"];
     const output = [];
     result.results.bindings.forEach(row => {
         const existingMedium = output.find(item => item.gm_id === row.medium_id.value);
@@ -64,7 +64,7 @@ WHERE {
         if(!existingMedium) {
             medium.gm_id = row.medium_id.value;
             medium.label = row.medium_name.value;
-            medium.original_media_id = row.original_media_id.value;
+            medium.original_media_id = row.original_media_id?.value ?? "";
             medium.organisms = [];
             output.push(medium);
         }

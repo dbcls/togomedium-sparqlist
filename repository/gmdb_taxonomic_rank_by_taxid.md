@@ -59,10 +59,10 @@ WHERE {
             dcterms:identifier ?phylum_taxid .
   }
   OPTIONAL {
-    taxid:{{tax_id}} rdfs:subClassOf+ ?superkingdom .
-    ?superkingdom ddbj-tax:rank ddbj-tax:Superkingdom ;
-                  rdfs:label ?superkingdom_label ;
-                  dcterms:identifier ?superkingdom_taxid .
+    taxid:{{tax_id}} rdfs:subClassOf+ ?domain .
+    ?domain ddbj-tax:rank ddbj-tax:Domain ;
+                  rdfs:label ?domain_label ;
+                  dcterms:identifier ?domain_taxid .
   }
   OPTIONAL {
     taxid:{{tax_id}} ddbj-tax:authority ?authority_name .
@@ -89,18 +89,18 @@ WHERE {
     }
     rank.lineage = [] ;
 
-    let superkingdom = {};
-    superkingdom.rank = "superkingdom" ;
-    if (rows[0].superkingdom) {
-      superkingdom.label = rows[0].superkingdom_label.value ;
-      superkingdom.uri = rows[0].superkingdom.value ;
-      superkingdom.taxid = rows[0].superkingdom_taxid.value ;
+    let domain = {};
+    domain.rank = "domain" ;
+    if (rows[0].domain) {
+      domain.label = rows[0].domain_label.value ;
+      domain.uri = rows[0].domain.value ;
+      domain.taxid = rows[0].domain_taxid.value ;
     } else {
-      superkingdom.label = "NA" ;
-      superkingdom.uri= "NA" ;
-      superkingdom.taxid = "NA" ;
+      domain.label = "NA" ;
+      domain.uri= "NA" ;
+      domain.taxid = "NA" ;
     }
-    rank.lineage.push(superkingdom) ;
+    rank.lineage.push(domain) ;
 
     let phylum = {};
     phylum.rank = "phylum" ;
