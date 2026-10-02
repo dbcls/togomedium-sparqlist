@@ -1,6 +1,6 @@
 # Search component list
 
-Search and paginate components before counting direct medium usages for the selected page. Return total count without facet aggregation.
+Search components without facet aggregation. Name/ID sorting counts medium usages after selecting the page; medium\_count sorting counts all matching components before sorting and pagination.
 
 ## Parameters
 
@@ -13,9 +13,9 @@ Search and paginate components before counting direct medium usages for the sele
 - `property_id` Directly assigned Property GMO ID. Empty means no Property filter.
   - default: 
   - example: GMO\_000050
-- `sort` Sort by preferred name or GMO ID. Sorting by medium\_count is not supported.
+- `sort` Sort by preferred name, GMO ID, or direct medium usage count. medium\_count requires aggregation over all matching components before pagination.
   - default: name
-  - example: name, id
+  - example: name, id, medium\_count
 - `order` Sort direction: asc for ascending or desc for descending.
   - default: asc
   - example: asc, desc
@@ -165,11 +165,12 @@ Search and paginate components before counting direct medium usages for the sele
     },
     "sort": {
       "default": "name",
-      "pattern": "^(?:name|id)$",
-      "description": "Sort by preferred name or GMO ID. Sorting by medium_count is not supported.",
+      "pattern": "^(?:name|medium_count|id)$",
+      "description": "Sort by preferred name, GMO ID, or direct medium usage count. medium_count requires aggregation over all matching components before pagination.",
       "examples": [
         "name",
-        "id"
+        "id",
+        "medium_count"
       ]
     },
     "order": {
@@ -201,6 +202,14 @@ Search and paginate components before counting direct medium usages for the sele
         "20"
       ]
     }
+  },
+  "queryVariants": {
+    "list-components-with-properties.rq": {
+      "parameter": "sort",
+      "cases": {
+        "medium_count": "list-components-by-medium-count.rq"
+      }
+    }
   }
 }, prepare, select);
 }
@@ -209,6 +218,123 @@ Search and paginate components before counting direct medium usages for the sele
 ## `result`
 
 ```sparql
+{{#if prepared.variants.result.case0}}
+# Select one label per component; paginate before expanding properties and roles.
+# Pagination parameters: limit (default 20), offset (default 0).
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX olo: <http://purl.org/ontology/olo/core#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX gmo: <http://purl.jp/bio/10/gmo/>
+
+SELECT ?gmo_id ?component ?label ?alias ?matched_name ?medium_count
+       ?property ?property_id ?property_label_en
+       ?role ?role_id ?role_label_en ?role_parent ?role_parent_id
+FROM <http://togomedium.org/gmo>
+FROM NAMED <http://togomedium.org/media>
+WHERE {
+  {
+    SELECT ?gmo_id ?component ?label
+           (COUNT(DISTINCT ?medium) AS ?medium_count)
+    WHERE {
+      {
+        SELECT ?gmo_id (?gmo AS ?component) (STR(?l) AS ?label)
+        WHERE {
+          ?gmo rdfs:subClassOf+ gmo:GMO_000002 ;
+               dcterms:identifier ?gmo_id ;
+               skos:prefLabel ?l .
+          FILTER(REGEX(STR(?gmo_id), "^GMO_[0-9]{6}$"))
+          FILTER({{{prepared.literals.name}}} = "" || EXISTS {
+            ?gmo (skos:prefLabel|skos:altLabel) ?search_label .
+            FILTER(CONTAINS(LCASE(STR(?search_label)), LCASE({{{prepared.literals.name}}})))
+          })
+          FILTER({{{prepared.literals.role_id}}} = "" || EXISTS {
+            ?gmo gmo:GMO_000112 ?assigned_filter_role .
+            ?assigned_filter_role rdfs:subClassOf* ?filter_role .
+            ?filter_role rdfs:subClassOf+ gmo:GMO_000037 ;
+                         dcterms:identifier {{{prepared.literals.role_id}}} .
+          })
+          FILTER({{{prepared.literals.property_id}}} = "" || EXISTS {
+            ?gmo gmo:GMO_000113 ?filter_property .
+            ?filter_property rdfs:subClassOf gmo:GMO_000039 ;
+                             dcterms:identifier {{{prepared.literals.property_id}}} .
+          })
+          # Prefer English, then the lexically first label and language tag.
+          FILTER NOT EXISTS {
+            ?gmo skos:prefLabel ?other_label .
+            FILTER(
+              (LANGMATCHES(LANG(?other_label), "en") && !LANGMATCHES(LANG(?l), "en")) ||
+              (LANGMATCHES(LANG(?other_label), "en") = LANGMATCHES(LANG(?l), "en") &&
+                (STR(?other_label) < STR(?l) ||
+                 (STR(?other_label) = STR(?l) && LANG(?other_label) < LANG(?l))))
+            )
+          }
+
+        }
+        GROUP BY ?gmo_id ?gmo ?l
+      }
+      OPTIONAL {
+        GRAPH <http://togomedium.org/media> {
+          ?medium olo:slot/olo:item ?component_table .
+          ?component_table rdf:type gmo:Component ;
+                           gmo:has_component ?recipe_component .
+          ?recipe_component gmo:gmo_id ?component .
+        }
+      }
+    }
+    GROUP BY ?gmo_id ?component ?label
+    ORDER BY
+      ASC(IF({{{prepared.literals.sort}}} = "name" && {{{prepared.literals.order}}} = "asc", ?label, ""))
+      DESC(IF({{{prepared.literals.sort}}} = "name" && {{{prepared.literals.order}}} = "desc", ?label, ""))
+      ASC(IF({{{prepared.literals.sort}}} = "id" && {{{prepared.literals.order}}} = "asc", ?gmo_id, ""))
+      DESC(IF({{{prepared.literals.sort}}} = "id" && {{{prepared.literals.order}}} = "desc", ?gmo_id, ""))
+      ASC(IF({{{prepared.literals.sort}}} = "medium_count" && {{{prepared.literals.order}}} = "asc", COUNT(DISTINCT ?medium), ""))
+      DESC(IF({{{prepared.literals.sort}}} = "medium_count" && {{{prepared.literals.order}}} = "desc", COUNT(DISTINCT ?medium), ""))
+      ?gmo_id
+    LIMIT {{{prepared.values.limit}}}
+    OFFSET {{{prepared.values.offset}}}
+  }
+  OPTIONAL {
+    {
+      ?component gmo:GMO_000113 ?property .
+      ?property dcterms:identifier ?property_id ;
+                rdfs:label ?property_label_en .
+      FILTER(LANG(?property_label_en) = "en")
+    }
+    UNION
+    { ?component skos:altLabel ?alias . }
+    UNION
+    {
+      FILTER({{{prepared.literals.name}}} != "")
+      ?component (skos:prefLabel|skos:altLabel) ?matched_name .
+      FILTER(CONTAINS(LCASE(STR(?matched_name)), LCASE({{{prepared.literals.name}}})))
+    }
+    UNION
+    {
+      ?component gmo:GMO_000112 ?role .
+      ?role dcterms:identifier ?role_id ;
+            rdfs:label ?role_label_en .
+      FILTER(LANG(?role_label_en) = "en")
+      OPTIONAL {
+        ?role rdfs:subClassOf ?role_parent .
+        ?role_parent rdfs:subClassOf* gmo:GMO_000037 .
+        OPTIONAL { ?role_parent dcterms:identifier ?role_parent_id . }
+      }
+    }
+  }
+}
+ORDER BY
+  ASC(IF({{{prepared.literals.sort}}} = "name" && {{{prepared.literals.order}}} = "asc", ?label, ""))
+  DESC(IF({{{prepared.literals.sort}}} = "name" && {{{prepared.literals.order}}} = "desc", ?label, ""))
+  ASC(IF({{{prepared.literals.sort}}} = "id" && {{{prepared.literals.order}}} = "asc", ?gmo_id, ""))
+  DESC(IF({{{prepared.literals.sort}}} = "id" && {{{prepared.literals.order}}} = "desc", ?gmo_id, ""))
+  ASC(IF({{{prepared.literals.sort}}} = "medium_count" && {{{prepared.literals.order}}} = "asc", ?medium_count, ""))
+  DESC(IF({{{prepared.literals.sort}}} = "medium_count" && {{{prepared.literals.order}}} = "desc", ?medium_count, ""))
+  ?gmo_id
+  ?property_id ?property_label_en ?role_id ?role_label_en ?alias ?matched_name
+
+{{else}}
 # Select one label per component; paginate before expanding properties and roles.
 # Pagination parameters: limit (default 20), offset (default 0).
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -319,6 +445,8 @@ ORDER BY
   DESC(IF({{{prepared.literals.sort}}} = "id" && {{{prepared.literals.order}}} = "desc", ?gmo_id, ""))
   ?gmo_id
   ?property_id ?property_label_en ?role_id ?role_label_en ?alias ?matched_name
+
+{{/if}}
 ```
 
 ## `count`
