@@ -14,10 +14,10 @@ Search components without facet aggregation. Name/ID sorting counts medium usage
   - default: 
   - example: GMO\_000050
 - `sort` Sort by preferred name, GMO ID, or direct medium usage count. medium\_count requires aggregation over all matching components before pagination.
-  - default: name
+  - default: medium\_count
   - example: name, id, medium\_count
 - `order` Sort direction: asc for ascending or desc for descending.
-  - default: asc
+  - default: desc
   - example: asc, desc
 - `limit` Maximum number of components to return. Use a non-negative safe integer; 0 returns an empty list.
   - default: 20
@@ -164,7 +164,7 @@ Search components without facet aggregation. Name/ID sorting counts medium usage
       ]
     },
     "sort": {
-      "default": "name",
+      "default": "medium_count",
       "pattern": "^(?:name|medium_count|id)$",
       "description": "Sort by preferred name, GMO ID, or direct medium usage count. medium_count requires aggregation over all matching components before pagination.",
       "examples": [
@@ -174,7 +174,7 @@ Search components without facet aggregation. Name/ID sorting counts medium usage
       ]
     },
     "order": {
-      "default": "asc",
+      "default": "desc",
       "pattern": "^(?:asc|desc)$",
       "description": "Sort direction: asc for ascending or desc for descending.",
       "examples": [
