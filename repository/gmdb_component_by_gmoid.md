@@ -155,7 +155,7 @@ WHERE {
         }
       }
     }
-    gmo_component["alt_labels_en"] = alt_labels_en ;
+    gmo_component["alt_labels_en"] = alt_labels_en.sort() ;
     gmo_component["alt_labels_ja"] = alt_labels_ja ;
     gmo_component["super_classes"] = super_classes ;
     gmo_component["sub_classes"] = sub_classes ;

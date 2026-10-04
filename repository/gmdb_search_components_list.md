@@ -4,15 +4,15 @@ Search components without facet aggregation. Name/ID sorting counts medium usage
 
 ## Parameters
 
-- `name` Case-insensitive literal substring of a preferred or alternative name. Empty means no name filter.
+- `name` Case-insensitive literal substring of an all-language preferred/alternative name or GMO ID. Empty means no search filter.
   - default: 
-  - example: glucose, Dextrose
-- `role_id` Role GMO ID, including all descendant Roles. Empty means no Role filter.
+  - example: glucose, GMO\_001009, 001009
+- `role_id` Role GMO ID, including all descendant Roles. Empty means no Role filter. none selects components without any assignment of the classification predicate, independent of labels.
   - default: 
-  - example: GMO\_000042
-- `property_id` Directly assigned Property GMO ID. Empty means no Property filter.
+  - example: GMO\_000042, none
+- `property_id` Directly assigned Property GMO ID. Empty means no Property filter. none selects components without any assignment of the classification predicate, independent of labels.
   - default: 
-  - example: GMO\_000050
+  - example: GMO\_000050, none
 - `sort` Sort by preferred name, GMO ID, or direct medium usage count. medium\_count requires aggregation over all matching components before pagination.
   - default: medium\_count
   - example: name, id, medium\_count
@@ -141,26 +141,29 @@ Search components without facet aggregation. Name/ID sorting counts medium usage
     "name": {
       "default": "",
       "pattern": "^[\\s\\S]*$",
-      "description": "Case-insensitive literal substring of a preferred or alternative name. Empty means no name filter.",
+      "description": "Case-insensitive literal substring of an all-language preferred/alternative name or GMO ID. Empty means no search filter.",
       "examples": [
         "glucose",
-        "Dextrose"
+        "GMO_001009",
+        "001009"
       ]
     },
     "role_id": {
       "default": "",
-      "pattern": "^(?:GMO_[0-9]{6})?$",
-      "description": "Role GMO ID, including all descendant Roles. Empty means no Role filter.",
+      "pattern": "^(?:GMO_[0-9]{6}|none)?$",
+      "description": "Role GMO ID, including all descendant Roles. Empty means no Role filter. none selects components without any assignment of the classification predicate, independent of labels.",
       "examples": [
-        "GMO_000042"
+        "GMO_000042",
+        "none"
       ]
     },
     "property_id": {
       "default": "",
-      "pattern": "^(?:GMO_[0-9]{6})?$",
-      "description": "Directly assigned Property GMO ID. Empty means no Property filter.",
+      "pattern": "^(?:GMO_[0-9]{6}|none)?$",
+      "description": "Directly assigned Property GMO ID. Empty means no Property filter. none selects components without any assignment of the classification predicate, independent of labels.",
       "examples": [
-        "GMO_000050"
+        "GMO_000050",
+        "none"
       ]
     },
     "sort": {
@@ -245,21 +248,21 @@ WHERE {
                dcterms:identifier ?gmo_id ;
                skos:prefLabel ?l .
           FILTER(REGEX(STR(?gmo_id), "^GMO_[0-9]{6}$"))
-          FILTER({{{prepared.literals.name}}} = "" || EXISTS {
+          FILTER({{{prepared.literals.name}}} = "" || CONTAINS(LCASE(STR(?gmo_id)), LCASE({{{prepared.literals.name}}})) || EXISTS {
             ?gmo (skos:prefLabel|skos:altLabel) ?search_label .
             FILTER(CONTAINS(LCASE(STR(?search_label)), LCASE({{{prepared.literals.name}}})))
           })
-          FILTER({{{prepared.literals.role_id}}} = "" || EXISTS {
+          FILTER({{{prepared.literals.role_id}}} = "" || ({{{prepared.literals.role_id}}} = "none" && NOT EXISTS { ?gmo gmo:GMO_000112 ?missing_assignment . }) || ({{{prepared.literals.role_id}}} != "none" && EXISTS {
             ?gmo gmo:GMO_000112 ?assigned_filter_role .
             ?assigned_filter_role rdfs:subClassOf* ?filter_role .
             ?filter_role rdfs:subClassOf+ gmo:GMO_000037 ;
                          dcterms:identifier {{{prepared.literals.role_id}}} .
-          })
-          FILTER({{{prepared.literals.property_id}}} = "" || EXISTS {
+          }))
+          FILTER({{{prepared.literals.property_id}}} = "" || ({{{prepared.literals.property_id}}} = "none" && NOT EXISTS { ?gmo gmo:GMO_000113 ?missing_assignment . }) || ({{{prepared.literals.property_id}}} != "none" && EXISTS {
             ?gmo gmo:GMO_000113 ?filter_property .
             ?filter_property rdfs:subClassOf gmo:GMO_000039 ;
                              dcterms:identifier {{{prepared.literals.property_id}}} .
-          })
+          }))
           # Prefer English, then the lexically first label and language tag.
           FILTER NOT EXISTS {
             ?gmo skos:prefLabel ?other_label .
@@ -303,7 +306,7 @@ WHERE {
       FILTER(LANG(?property_label_en) = "en")
     }
     UNION
-    { ?component skos:altLabel ?alias . }
+    { ?component skos:altLabel ?alias . FILTER(LANG(?alias) = "en") }
     UNION
     {
       FILTER({{{prepared.literals.name}}} != "")
@@ -361,21 +364,21 @@ WHERE {
                dcterms:identifier ?gmo_id ;
                skos:prefLabel ?l .
           FILTER(REGEX(STR(?gmo_id), "^GMO_[0-9]{6}$"))
-          FILTER({{{prepared.literals.name}}} = "" || EXISTS {
+          FILTER({{{prepared.literals.name}}} = "" || CONTAINS(LCASE(STR(?gmo_id)), LCASE({{{prepared.literals.name}}})) || EXISTS {
             ?gmo (skos:prefLabel|skos:altLabel) ?search_label .
             FILTER(CONTAINS(LCASE(STR(?search_label)), LCASE({{{prepared.literals.name}}})))
           })
-          FILTER({{{prepared.literals.role_id}}} = "" || EXISTS {
+          FILTER({{{prepared.literals.role_id}}} = "" || ({{{prepared.literals.role_id}}} = "none" && NOT EXISTS { ?gmo gmo:GMO_000112 ?missing_assignment . }) || ({{{prepared.literals.role_id}}} != "none" && EXISTS {
             ?gmo gmo:GMO_000112 ?assigned_filter_role .
             ?assigned_filter_role rdfs:subClassOf* ?filter_role .
             ?filter_role rdfs:subClassOf+ gmo:GMO_000037 ;
                          dcterms:identifier {{{prepared.literals.role_id}}} .
-          })
-          FILTER({{{prepared.literals.property_id}}} = "" || EXISTS {
+          }))
+          FILTER({{{prepared.literals.property_id}}} = "" || ({{{prepared.literals.property_id}}} = "none" && NOT EXISTS { ?gmo gmo:GMO_000113 ?missing_assignment . }) || ({{{prepared.literals.property_id}}} != "none" && EXISTS {
             ?gmo gmo:GMO_000113 ?filter_property .
             ?filter_property rdfs:subClassOf gmo:GMO_000039 ;
                              dcterms:identifier {{{prepared.literals.property_id}}} .
-          })
+          }))
           # Prefer English, then the lexically first label and language tag.
           FILTER NOT EXISTS {
             ?gmo skos:prefLabel ?other_label .
@@ -417,7 +420,7 @@ WHERE {
       FILTER(LANG(?property_label_en) = "en")
     }
     UNION
-    { ?component skos:altLabel ?alias . }
+    { ?component skos:altLabel ?alias . FILTER(LANG(?alias) = "en") }
     UNION
     {
       FILTER({{{prepared.literals.name}}} != "")
@@ -465,21 +468,21 @@ WHERE {
        dcterms:identifier ?gmo_id ;
        skos:prefLabel ?label .
   FILTER(REGEX(STR(?gmo_id), "^GMO_[0-9]{6}$"))
-  FILTER({{{prepared.literals.name}}} = "" || EXISTS {
+  FILTER({{{prepared.literals.name}}} = "" || CONTAINS(LCASE(STR(?gmo_id)), LCASE({{{prepared.literals.name}}})) || EXISTS {
     ?gmo (skos:prefLabel|skos:altLabel) ?search_label .
     FILTER(CONTAINS(LCASE(STR(?search_label)), LCASE({{{prepared.literals.name}}})))
   })
-  FILTER({{{prepared.literals.role_id}}} = "" || EXISTS {
+  FILTER({{{prepared.literals.role_id}}} = "" || ({{{prepared.literals.role_id}}} = "none" && NOT EXISTS { ?gmo gmo:GMO_000112 ?missing_assignment . }) || ({{{prepared.literals.role_id}}} != "none" && EXISTS {
     ?gmo gmo:GMO_000112 ?assigned_filter_role .
     ?assigned_filter_role rdfs:subClassOf* ?filter_role .
     ?filter_role rdfs:subClassOf+ gmo:GMO_000037 ;
                  dcterms:identifier {{{prepared.literals.role_id}}} .
-  })
-  FILTER({{{prepared.literals.property_id}}} = "" || EXISTS {
+  }))
+  FILTER({{{prepared.literals.property_id}}} = "" || ({{{prepared.literals.property_id}}} = "none" && NOT EXISTS { ?gmo gmo:GMO_000113 ?missing_assignment . }) || ({{{prepared.literals.property_id}}} != "none" && EXISTS {
     ?gmo gmo:GMO_000113 ?filter_property .
     ?filter_property rdfs:subClassOf gmo:GMO_000039 ;
                      dcterms:identifier {{{prepared.literals.property_id}}} .
-  })
+  }))
 }
 ```
 
@@ -541,6 +544,7 @@ WHERE {
   }
 
   for (const component of components.values()) {
+    component.aliases.sort((left, right) => (left < right ? -1 : left > right ? 1 : 0));
     for (const role of component.roles) {
       const parent = parents.get(role.gmo_id);
       role.parent =

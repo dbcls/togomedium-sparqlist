@@ -4,15 +4,15 @@ Return Role and Property options with conditional counts, excluding the selected
 
 ## Parameters
 
-- `name` Case-insensitive literal substring of a preferred or alternative name. Empty means no name filter.
+- `name` Case-insensitive literal substring of an all-language preferred/alternative name or GMO ID. Empty means no search filter.
   - default: 
-  - example: glucose, Dextrose
-- `role_id` Role GMO ID, including all descendant Roles. Empty means no Role filter. Role facet counts ignore this parameter.
+  - example: glucose, GMO\_001009, 001009
+- `role_id` Role GMO ID, including all descendant Roles. Empty means no Role filter. Role facet counts ignore this parameter. none selects components without any assignment of the classification predicate, independent of labels.
   - default: 
-  - example: GMO\_000042
-- `property_id` Directly assigned Property GMO ID. Empty means no Property filter. Property facet counts ignore this parameter.
+  - example: GMO\_000042, none
+- `property_id` Directly assigned Property GMO ID. Empty means no Property filter. Property facet counts ignore this parameter. none selects components without any assignment of the classification predicate, independent of labels.
   - default: 
-  - example: GMO\_000050
+  - example: GMO\_000050, none
 
 ## Endpoint
 
@@ -123,32 +123,37 @@ Return Role and Property options with conditional counts, excluding the selected
 })(context, {
   "inputs": {
     "roles": "count-components-by-role.rq",
-    "properties": "count-components-by-property.rq"
+    "properties": "count-components-by-property.rq",
+    "role_none": "count-components-without-role.rq",
+    "property_none": "count-components-without-property.rq"
   },
   "parameters": {
     "name": {
       "default": "",
       "pattern": "^[\\s\\S]*$",
-      "description": "Case-insensitive literal substring of a preferred or alternative name. Empty means no name filter.",
+      "description": "Case-insensitive literal substring of an all-language preferred/alternative name or GMO ID. Empty means no search filter.",
       "examples": [
         "glucose",
-        "Dextrose"
+        "GMO_001009",
+        "001009"
       ]
     },
     "role_id": {
       "default": "",
-      "pattern": "^(?:GMO_[0-9]{6})?$",
-      "description": "Role GMO ID, including all descendant Roles. Empty means no Role filter. Role facet counts ignore this parameter.",
+      "pattern": "^(?:GMO_[0-9]{6}|none)?$",
+      "description": "Role GMO ID, including all descendant Roles. Empty means no Role filter. Role facet counts ignore this parameter. none selects components without any assignment of the classification predicate, independent of labels.",
       "examples": [
-        "GMO_000042"
+        "GMO_000042",
+        "none"
       ]
     },
     "property_id": {
       "default": "",
-      "pattern": "^(?:GMO_[0-9]{6})?$",
-      "description": "Directly assigned Property GMO ID. Empty means no Property filter. Property facet counts ignore this parameter.",
+      "pattern": "^(?:GMO_[0-9]{6}|none)?$",
+      "description": "Directly assigned Property GMO ID. Empty means no Property filter. Property facet counts ignore this parameter. none selects components without any assignment of the classification predicate, independent of labels.",
       "examples": [
-        "GMO_000050"
+        "GMO_000050",
+        "none"
       ]
     }
   }
@@ -181,15 +186,15 @@ WHERE {
     ?assigned_role rdfs:subClassOf* ?role .
     ?component gmo:GMO_000112 ?assigned_role .
     FILTER(REGEX(STR(?gmo_id), "^GMO_[0-9]{6}$"))
-    FILTER({{{prepared.literals.name}}} = "" || EXISTS {
+    FILTER({{{prepared.literals.name}}} = "" || CONTAINS(LCASE(STR(?gmo_id)), LCASE({{{prepared.literals.name}}})) || EXISTS {
       ?component (skos:prefLabel|skos:altLabel) ?search_label .
       FILTER(CONTAINS(LCASE(STR(?search_label)), LCASE({{{prepared.literals.name}}})))
     })
-    FILTER({{{prepared.literals.property_id}}} = "" || EXISTS {
+    FILTER({{{prepared.literals.property_id}}} = "" || ({{{prepared.literals.property_id}}} = "none" && NOT EXISTS { ?component gmo:GMO_000113 ?missing_assignment . }) || ({{{prepared.literals.property_id}}} != "none" && EXISTS {
       ?component gmo:GMO_000113 ?filter_property .
       ?filter_property rdfs:subClassOf gmo:GMO_000039 ;
                        dcterms:identifier {{{prepared.literals.property_id}}} .
-    })
+    }))
   }
 }
 GROUP BY ?role ?id ?label ?parent ?parent_id
@@ -215,27 +220,86 @@ WHERE {
                dcterms:identifier ?gmo_id ; skos:prefLabel ?preferred_label .
     ?component gmo:GMO_000113 ?property .
     FILTER(REGEX(STR(?gmo_id), "^GMO_[0-9]{6}$"))
-    FILTER({{{prepared.literals.name}}} = "" || EXISTS {
+    FILTER({{{prepared.literals.name}}} = "" || CONTAINS(LCASE(STR(?gmo_id)), LCASE({{{prepared.literals.name}}})) || EXISTS {
       ?component (skos:prefLabel|skos:altLabel) ?search_label .
       FILTER(CONTAINS(LCASE(STR(?search_label)), LCASE({{{prepared.literals.name}}})))
     })
-    FILTER({{{prepared.literals.role_id}}} = "" || EXISTS {
+    FILTER({{{prepared.literals.role_id}}} = "" || ({{{prepared.literals.role_id}}} = "none" && NOT EXISTS { ?component gmo:GMO_000112 ?missing_assignment . }) || ({{{prepared.literals.role_id}}} != "none" && EXISTS {
       ?component gmo:GMO_000112 ?assigned_filter_role .
       ?assigned_filter_role rdfs:subClassOf* ?filter_role .
       ?filter_role rdfs:subClassOf+ gmo:GMO_000037 ;
                    dcterms:identifier {{{prepared.literals.role_id}}} .
-    })
+    }))
   }
 }
 GROUP BY ?property ?id ?label
 ORDER BY ?label ?id
 ```
 
+## `role_none`
+
+```sparql
+# Count all matching components, with the same filters as the list, independently of pagination.
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX gmo: <http://purl.jp/bio/10/gmo/>
+
+SELECT (COUNT(DISTINCT ?gmo_id) AS ?count)
+FROM <http://togomedium.org/gmo>
+WHERE {
+  ?gmo rdfs:subClassOf+ gmo:GMO_000002 ;
+       dcterms:identifier ?gmo_id ;
+       skos:prefLabel ?label .
+  FILTER(REGEX(STR(?gmo_id), "^GMO_[0-9]{6}$"))
+  FILTER({{{prepared.literals.name}}} = "" || CONTAINS(LCASE(STR(?gmo_id)), LCASE({{{prepared.literals.name}}})) || EXISTS {
+    ?gmo (skos:prefLabel|skos:altLabel) ?search_label .
+    FILTER(CONTAINS(LCASE(STR(?search_label)), LCASE({{{prepared.literals.name}}})))
+  })
+  FILTER({{{prepared.literals.property_id}}} = "" || ({{{prepared.literals.property_id}}} = "none" && NOT EXISTS { ?gmo gmo:GMO_000113 ?missing_assignment . }) || ({{{prepared.literals.property_id}}} != "none" && EXISTS {
+    ?gmo gmo:GMO_000113 ?filter_property .
+    ?filter_property rdfs:subClassOf gmo:GMO_000039 ;
+                     dcterms:identifier {{{prepared.literals.property_id}}} .
+  }))
+  FILTER NOT EXISTS { ?gmo gmo:GMO_000112 ?assignment . }
+}
+```
+
+## `property_none`
+
+```sparql
+# Count all matching components, with the same filters as the list, independently of pagination.
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX gmo: <http://purl.jp/bio/10/gmo/>
+
+SELECT (COUNT(DISTINCT ?gmo_id) AS ?count)
+FROM <http://togomedium.org/gmo>
+WHERE {
+  ?gmo rdfs:subClassOf+ gmo:GMO_000002 ;
+       dcterms:identifier ?gmo_id ;
+       skos:prefLabel ?label .
+  FILTER(REGEX(STR(?gmo_id), "^GMO_[0-9]{6}$"))
+  FILTER({{{prepared.literals.name}}} = "" || CONTAINS(LCASE(STR(?gmo_id)), LCASE({{{prepared.literals.name}}})) || EXISTS {
+    ?gmo (skos:prefLabel|skos:altLabel) ?search_label .
+    FILTER(CONTAINS(LCASE(STR(?search_label)), LCASE({{{prepared.literals.name}}})))
+  })
+  FILTER({{{prepared.literals.role_id}}} = "" || ({{{prepared.literals.role_id}}} = "none" && NOT EXISTS { ?gmo gmo:GMO_000112 ?missing_assignment . }) || ({{{prepared.literals.role_id}}} != "none" && EXISTS {
+    ?gmo gmo:GMO_000112 ?assigned_filter_role .
+    ?assigned_filter_role rdfs:subClassOf* ?filter_role .
+    ?filter_role rdfs:subClassOf+ gmo:GMO_000037 ;
+                 dcterms:identifier {{{prepared.literals.role_id}}} .
+  }))
+  FILTER NOT EXISTS { ?gmo gmo:GMO_000113 ?assignment . }
+}
+```
+
 ## Output
 
 ```javascript
 ({
-  json: function json({ roles, properties }) {
+  json: function json({ roles, properties, role_none, property_none }) {
   const facet = (bindings, isRole) => {
     const items = new Map();
     const facetParents = new Map();
@@ -267,7 +331,17 @@ ORDER BY ?label ?id
     return [...items.values()];
   };
 
+  const noneCount = (result) => {
+    const raw = result.results.bindings[0]?.count?.value;
+    const count = Number(raw);
+    if (!/^(?:0|[1-9][0-9]*)$/.test(raw ?? "") || !Number.isSafeInteger(count)) {
+      throw new Error("Invalid unassigned classification count.");
+    }
+    return count;
+  };
   return {
+    role_none_count: noneCount(role_none),
+    property_none_count: noneCount(property_none),
     roles: facet(roles.results.bindings, true),
     properties: facet(properties.results.bindings, false),
   };
