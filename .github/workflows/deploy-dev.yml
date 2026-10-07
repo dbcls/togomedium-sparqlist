@@ -51,6 +51,7 @@ jobs:
         env:
           GATEWAY_HOST: ${{ secrets.GATEWAY_HOST }}
           GATEWAY_PORT: ${{ secrets.GATEWAY_PORT }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
         run: |
           ssh-keyscan -p "${GATEWAY_PORT}" -H "${GATEWAY_HOST}" \
             >> ~/.ssh/known_hosts
