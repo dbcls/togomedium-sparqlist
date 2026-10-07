@@ -42,8 +42,6 @@ jobs:
             IdentityFile ~/.ssh/deploy_key
             IdentitiesOnly yes
             ProxyCommand ssh -W %h:%p gateway
-            StrictHostKeyChecking no
-            UserKnownHostsFile /dev/null
           EOF
 
           chmod 600 ~/.ssh/config
@@ -56,6 +54,11 @@ jobs:
         run: |
           ssh-keyscan -p "${GATEWAY_PORT}" -H "${GATEWAY_HOST}" \
             >> ~/.ssh/known_hosts
+
+          printf '%s\n' "${DEPLOY_KNOWN_HOSTS}" \
+            >> ~/.ssh/known_hosts
+
+          chmod 600 ~/.ssh/known_hosts
 
       - name: Deploy
         shell: bash
