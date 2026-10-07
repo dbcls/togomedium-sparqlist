@@ -42,6 +42,8 @@ jobs:
             IdentityFile ~/.ssh/deploy_key
             IdentitiesOnly yes
             ProxyCommand ssh -W %h:%p gateway
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
           EOF
 
           chmod 600 ~/.ssh/config
