@@ -1,0 +1,64 @@
+name: Deploy dev
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH
+        shell: bash
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          GATEWAY_HOST: ${{ secrets.GATEWAY_HOST }}
+          GATEWAY_USER: ${{ secrets.GATEWAY_USER }}
+          GATEWAY_PORT: ${{ secrets.GATEWAY_PORT }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          # SSH private key
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          # SSH config
+          cat > ~/.ssh/config <<EOF
+          Host gateway
+            HostName ${GATEWAY_HOST}
+            User ${GATEWAY_USER}
+            Port ${GATEWAY_PORT}
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+
+          Host deploy1
+            HostName ${DEPLOY_HOST}
+            User ${DEPLOY_USER}
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+            ProxyCommand ssh -W %h:%p gateway
+          EOF
+
+          chmod 600 ~/.ssh/config
+
+      - name: Setup known hosts
+        shell: bash
+        env:
+          GATEWAY_HOST: ${{ secrets.GATEWAY_HOST }}
+          GATEWAY_PORT: ${{ secrets.GATEWAY_PORT }}
+        run: |
+          ssh-keyscan -p "${GATEWAY_PORT}" -H "${GATEWAY_HOST}" \
+            >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        shell: bash
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          ssh deploy1 \
+            "cd '${DEPLOY_PATH}' && git pull origin dev"
