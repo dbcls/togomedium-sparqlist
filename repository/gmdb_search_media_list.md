@@ -1,13 +1,13 @@
 # Search media with species and strain counts
 
-Search names and identifiers, taxonomy and inferred collection. Counts and sorting apply to all matching media before pagination. No collection specified does not assert curator origin.
+Search names and identifiers, taxonomy and inferred collection. Taxonomy filters media only; species and strain counts and sorting always cover all organisms registered to each matching medium. No collection specified does not assert curator origin.
 
 ## Parameters
 
 - `name` Case-insensitive literal substring of medium name, GM ID or original ID. Empty means no text filter.
   - default: 
   - example: mrs, M1406, NBRC\_M1
-- `taxonomy_id` One positive NCBI Taxonomy ID from filtered\_has\_strain, including its descendants. Empty means no taxonomy filter.
+- `taxonomy_id` One positive NCBI Taxonomy ID from filtered\_has\_strain, including its descendants. Filters media only; displayed counts remain whole-medium totals. Empty means no taxonomy filter.
   - default: 
   - example: 1386, 562, 83333
 - `collection` Inferred collection ID. Empty means Any; none means No collection specified.
@@ -151,7 +151,7 @@ Search names and identifiers, taxonomy and inferred collection. Counts and sorti
     "taxonomy_id": {
       "default": "",
       "pattern": "^(?:[1-9][0-9]{0,19})?$",
-      "description": "One positive NCBI Taxonomy ID from filtered_has_strain, including its descendants. Empty means no taxonomy filter.",
+      "description": "One positive NCBI Taxonomy ID from filtered_has_strain, including its descendants. Filters media only; displayed counts remain whole-medium totals. Empty means no taxonomy filter.",
       "examples": [
         "1386",
         "562",
@@ -253,6 +253,7 @@ WHERE {
   OPTIONAL { ?medium gmo:GMO_000108 ?source . }
   OPTIONAL { ?medium gmo:ph ?raw_ph . }
   FILTER({{{prepared.literals.name}}} = "" || CONTAINS(LCASE(STR(?id)), LCASE({{{prepared.literals.name}}})) || CONTAINS(LCASE(STR(?raw_name)), LCASE({{{prepared.literals.name}}})) || CONTAINS(LCASE(COALESCE(STR(?origin), "")), LCASE({{{prepared.literals.name}}})))
+
 OPTIONAL { ?medium gmo:GMO_000114/gmo:strain_id ?strain . OPTIONAL {
   ?strain gmo:taxon ?taxon .
   GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
@@ -304,14 +305,21 @@ WHERE {
   OPTIONAL { ?medium gmo:GMO_000108 ?source . }
   OPTIONAL { ?medium gmo:ph ?raw_ph . }
   FILTER({{{prepared.literals.name}}} = "" || CONTAINS(LCASE(STR(?id)), LCASE({{{prepared.literals.name}}})) || CONTAINS(LCASE(STR(?raw_name)), LCASE({{{prepared.literals.name}}})) || CONTAINS(LCASE(COALESCE(STR(?origin), "")), LCASE({{{prepared.literals.name}}})))
-?medium gmo:GMO_000114/gmo:strain_id ?strain .
-?strain gmo:taxon ?taxon .
-GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
-  ?requested_taxon tax:scientificName ?requested_name .
-  ?taxon rdfs:subClassOf* ?requested_taxon .
-  FILTER(?requested_taxon = IRI(CONCAT("http://identifiers.org/taxonomy/", {{{prepared.literals.taxonomy_id}}})))
-  OPTIONAL { ?taxon rdfs:subClassOf* ?species . ?species tax:rank tax:Species . }
+FILTER EXISTS {
+  ?medium gmo:GMO_000114/gmo:strain_id ?filter_strain .
+  ?filter_strain gmo:taxon ?filter_taxon .
+  GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
+    ?requested_taxon tax:scientificName ?requested_name .
+    ?filter_taxon rdfs:subClassOf* ?requested_taxon .
+    FILTER(?requested_taxon = IRI(CONCAT("http://identifiers.org/taxonomy/", {{{prepared.literals.taxonomy_id}}})))
+  }
 }
+OPTIONAL { ?medium gmo:GMO_000114/gmo:strain_id ?strain . OPTIONAL {
+  ?strain gmo:taxon ?taxon .
+  GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
+    ?taxon rdfs:subClassOf* ?species . ?species tax:rank tax:Species .
+  }
+} }
 }
 GROUP BY ?id
 }
