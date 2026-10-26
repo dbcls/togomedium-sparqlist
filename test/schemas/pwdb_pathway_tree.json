@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pwdb_pathway_tree",
+  "type": "object",
+  "required": [
+    "id",
+    "label",
+    "num_of_data",
+    "selectable",
+    "children"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "num_of_data": {
+      "type": "integer"
+    },
+    "selectable": {
+      "type": "boolean"
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "num_of_data",
+          "selectable",
+          "children"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "num_of_data": {
+            "type": "integer"
+          },
+          "selectable": {
+            "type": "boolean"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "label",
+                "num_of_data",
+                "selectable",
+                "children"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "num_of_data": {
+                  "type": "integer"
+                },
+                "selectable": {
+                  "type": "boolean"
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "label",
+                      "num_of_data",
+                      "selectable"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "num_of_data": {
+                        "type": "integer"
+                      },
+                      "selectable": {
+                        "type": "boolean"
+                      },
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "label",
+                            "num_of_data",
+                            "selectable"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "label": {
+                              "type": "string"
+                            },
+                            "num_of_data": {
+                              "type": "integer"
+                            },
+                            "selectable": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

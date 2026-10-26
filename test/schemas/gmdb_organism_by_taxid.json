@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_organism_by_taxid",
+  "type": "object",
+  "required": [
+    "scientific_name",
+    "taxid",
+    "rank",
+    "authority_name",
+    "lineage",
+    "type_material",
+    "other_type_material"
+  ],
+  "properties": {
+    "scientific_name": {
+      "type": "string"
+    },
+    "taxid": {
+      "type": "integer"
+    },
+    "rank": {
+      "type": "string"
+    },
+    "authority_name": {
+      "type": "string"
+    },
+    "lineage": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "uri",
+          "taxid",
+          "label",
+          "rank"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string"
+          },
+          "taxid": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "type_material": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "label"
+        ],
+        "properties": {
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "other_type_material": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "label",
+          "name"
+        ],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

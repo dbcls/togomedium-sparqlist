@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_search_components_list",
+  "type": "object",
+  "required": [
+    "contents",
+    "total",
+    "limit",
+    "offset"
+  ],
+  "properties": {
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "aliases",
+          "matched_names",
+          "medium_count",
+          "properties",
+          "roles"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "matched_names": {
+            "type": "array"
+          },
+          "medium_count": {
+            "type": "integer"
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "gmo_id",
+                "label_en"
+              ],
+              "properties": {
+                "gmo_id": {
+                  "type": "string"
+                },
+                "label_en": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "gmo_id",
+                "label_en",
+                "parent"
+              ],
+              "properties": {
+                "gmo_id": {
+                  "type": "string"
+                },
+                "label_en": {
+                  "type": "string"
+                },
+                "parent": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "total": {
+      "type": "string"
+    },
+    "limit": {
+      "type": "string"
+    },
+    "offset": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_stat_media_tax_histgram",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "bin",
+      "frequency"
+    ],
+    "properties": {
+      "bin": {
+        "type": "string"
+      },
+      "frequency": {
+        "type": "integer"
+      }
+    }
+  }
+}
