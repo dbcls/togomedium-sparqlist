@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_organisms_by_phenotypes",
+  "type": "object",
+  "required": [
+    "total",
+    "offset",
+    "limit",
+    "contents"
+  ],
+  "properties": {
+    "total": {
+      "type": "integer"
+    },
+    "offset": {
+      "type": "integer"
+    },
+    "limit": {
+      "type": "integer"
+    },
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "tax_id",
+          "name"
+        ],
+        "properties": {
+          "tax_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

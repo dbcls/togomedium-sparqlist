@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_media_strains_alignment_by_gm_ids",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "gm_id",
+      "label",
+      "original_media_id",
+      "organisms"
+    ],
+    "properties": {
+      "gm_id": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "original_media_id": {
+        "type": "string"
+      },
+      "organisms": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "domain",
+            "phylum",
+            "class",
+            "order",
+            "family",
+            "genus",
+            "species",
+            "strain"
+          ],
+          "properties": {
+            "domain": {
+              "type": "object",
+              "required": [
+                "id",
+                "label"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            },
+            "phylum": {
+              "type": "object",
+              "required": [
+                "id",
+                "label"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            },
+            "class": {
+              "type": "object",
+              "required": [
+                "id",
+                "label"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            },
+            "order": {
+              "type": "object",
+              "required": [
+                "id",
+                "label"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            },
+            "family": {
+              "type": "object",
+              "required": [
+                "id",
+                "label"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            },
+            "genus": {
+              "type": "object",
+              "required": [
+                "id",
+                "label"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            },
+            "species": {
+              "type": "object",
+              "required": [
+                "id",
+                "label"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            },
+            "strain": {
+              "type": "object",
+              "required": [
+                "id",
+                "label"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

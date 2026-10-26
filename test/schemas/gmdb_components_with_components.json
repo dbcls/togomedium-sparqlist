@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_components_with_components",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "gmo_id",
+      "name",
+      "japanese_name"
+    ],
+    "properties": {
+      "gmo_id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "japanese_name": {
+        "type": "string"
+      }
+    }
+  }
+}

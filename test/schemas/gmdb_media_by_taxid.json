@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_media_by_taxid",
+  "type": "object",
+  "required": [
+    "total",
+    "offset",
+    "contents",
+    "columns",
+    "limit"
+  ],
+  "properties": {
+    "total": {
+      "type": "integer"
+    },
+    "offset": {
+      "type": "integer"
+    },
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "original_media_id",
+          "media_id"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "original_media_id": {
+            "type": "string"
+          },
+          "media_id": {
+            "type": "object",
+            "required": [
+              "label",
+              "href"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "label"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "limit": {
+      "type": "integer"
+    }
+  }
+}
