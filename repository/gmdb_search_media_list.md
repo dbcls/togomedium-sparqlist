@@ -7,9 +7,9 @@ Search names and identifiers, taxonomy and inferred collection. Taxonomy filters
 - `name` Case-insensitive literal substring of medium name, GM ID or original ID. Empty means no text filter.
   - default: 
   - example: mrs, M1406, NBRC\_M1
-- `taxonomy_id` One positive NCBI Taxonomy ID from filtered\_has\_strain, including its descendants. Filters media only; displayed counts remain whole-medium totals. Empty means no taxonomy filter.
+- `taxonomy_id` Up to five comma-separated positive NCBI Taxonomy IDs, combined with AND at medium level. Each ID includes descendants; different strains may satisfy different IDs. Duplicate IDs are equivalent to one. Empty means no filter. Counts always cover the whole medium.
   - default: 
-  - example: 1386, 562, 83333
+  - example: 1386, 1386,561, 561,562, 83333
 - `collection` Inferred collection ID. Empty means Any; none means No collection specified.
   - default: 
   - example: JCM, none
@@ -150,11 +150,14 @@ Search names and identifiers, taxonomy and inferred collection. Taxonomy filters
     },
     "taxonomy_id": {
       "default": "",
-      "pattern": "^(?:[1-9][0-9]{0,19})?$",
-      "description": "One positive NCBI Taxonomy ID from filtered_has_strain, including its descendants. Filters media only; displayed counts remain whole-medium totals. Empty means no taxonomy filter.",
+      "type": "string-list",
+      "placeholder": "taxonomy_values",
+      "pattern": "^(?:[1-9][0-9]{0,19}(?:,[1-9][0-9]{0,19}){0,4})?$",
+      "description": "Up to five comma-separated positive NCBI Taxonomy IDs, combined with AND at medium level. Each ID includes descendants; different strains may satisfy different IDs. Duplicate IDs are equivalent to one. Empty means no filter. Counts always cover the whole medium.",
       "examples": [
         "1386",
-        "562",
+        "1386,561",
+        "561,562",
         "83333"
       ]
     },
@@ -305,14 +308,22 @@ WHERE {
   OPTIONAL { ?medium gmo:GMO_000108 ?source . }
   OPTIONAL { ?medium gmo:ph ?raw_ph . }
   FILTER({{{prepared.literals.name}}} = "" || CONTAINS(LCASE(STR(?id)), LCASE({{{prepared.literals.name}}})) || CONTAINS(LCASE(STR(?raw_name)), LCASE({{{prepared.literals.name}}})) || CONTAINS(LCASE(COALESCE(STR(?origin), "")), LCASE({{{prepared.literals.name}}})))
-FILTER EXISTS {
-  ?medium gmo:GMO_000114/gmo:strain_id ?filter_strain .
-  ?filter_strain gmo:taxon ?filter_taxon .
-  GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
-    ?requested_taxon tax:scientificName ?requested_name .
-    ?filter_taxon rdfs:subClassOf* ?requested_taxon .
-    FILTER(?requested_taxon = IRI(CONCAT("http://identifiers.org/taxonomy/", {{{prepared.literals.taxonomy_id}}})))
+{
+  SELECT ?medium WHERE {
+    { SELECT (COUNT(DISTINCT ?input_tax_id) AS ?input_taxon_count) WHERE {
+      VALUES ?input_tax_id { {{{prepared.lists.taxonomy_values}}} }
+    } }
+    VALUES ?required_tax_id { {{{prepared.lists.taxonomy_values}}} }
+    ?medium gmo:GMO_000114/gmo:strain_id ?filter_strain .
+    ?filter_strain gmo:taxon ?filter_taxon .
+    GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
+      ?requested_taxon tax:scientificName ?requested_name .
+      ?filter_taxon rdfs:subClassOf* ?requested_taxon .
+      FILTER(STR(?requested_taxon) = CONCAT("http://identifiers.org/taxonomy/", ?required_tax_id))
+    }
   }
+  GROUP BY ?medium ?input_taxon_count
+  HAVING(COUNT(DISTINCT ?required_tax_id) = ?input_taxon_count)
 }
 OPTIONAL { ?medium gmo:GMO_000114/gmo:strain_id ?strain . OPTIONAL {
   ?strain gmo:taxon ?taxon .
@@ -416,9 +427,23 @@ VALUES (?collection_rank ?collection_id ?collection_label) {
   (4 "NIES" "NIES")
   (5 "none" "No collection specified")
 }
-?medium gmo:GMO_000114/gmo:strain_id ?filter_strain . ?filter_strain gmo:taxon ?filter_taxon .
-  GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> { ?requested_taxon tax:scientificName ?requested_name . ?filter_taxon rdfs:subClassOf* ?requested_taxon . FILTER(?requested_taxon = IRI(CONCAT("http://identifiers.org/taxonomy/", {{{prepared.literals.taxonomy_id}}}))) }
-
+{
+  SELECT ?medium WHERE {
+    { SELECT (COUNT(DISTINCT ?input_tax_id) AS ?input_taxon_count) WHERE {
+      VALUES ?input_tax_id { {{{prepared.lists.taxonomy_values}}} }
+    } }
+    VALUES ?required_tax_id { {{{prepared.lists.taxonomy_values}}} }
+    ?medium gmo:GMO_000114/gmo:strain_id ?filter_strain .
+    ?filter_strain gmo:taxon ?filter_taxon .
+    GRAPH <http://togomedium.org/taxonomy/filtered_has_strain> {
+      ?requested_taxon tax:scientificName ?requested_name .
+      ?filter_taxon rdfs:subClassOf* ?requested_taxon .
+      FILTER(STR(?requested_taxon) = CONCAT("http://identifiers.org/taxonomy/", ?required_tax_id))
+    }
+  }
+  GROUP BY ?medium ?input_taxon_count
+  HAVING(COUNT(DISTINCT ?required_tax_id) = ?input_taxon_count)
+}
 FILTER({{{prepared.literals.collection}}} = "" || ?collection_id = {{{prepared.literals.collection}}})
 }
 
