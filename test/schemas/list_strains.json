@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "list_strains",
+  "type": "object",
+  "required": [
+    "contents",
+    "total",
+    "limit",
+    "offset",
+    "columns"
+  ],
+  "properties": {
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "strain_id",
+          "name",
+          "other_ids",
+          "taxonomy"
+        ],
+        "properties": {
+          "strain_id": {
+            "type": "object",
+            "required": [
+              "label",
+              "href"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string"
+              }
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "other_ids": {
+            "type": "string"
+          },
+          "taxonomy": {
+            "type": "object",
+            "required": [
+              "label",
+              "href"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "total": {
+      "type": "string"
+    },
+    "limit": {
+      "type": "string"
+    },
+    "offset": {
+      "type": "string"
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "label"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

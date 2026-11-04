@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_search_components_facets",
+  "type": "object",
+  "required": [
+    "role_none_count",
+    "property_none_count",
+    "roles",
+    "properties"
+  ],
+  "properties": {
+    "role_none_count": {
+      "type": "integer"
+    },
+    "property_none_count": {
+      "type": "integer"
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "gmo_id",
+          "label_en",
+          "count",
+          "parent"
+        ],
+        "properties": {
+          "gmo_id": {
+            "type": "string"
+          },
+          "label_en": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "parent": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    "properties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "gmo_id",
+          "label_en",
+          "count"
+        ],
+        "properties": {
+          "gmo_id": {
+            "type": "string"
+          },
+          "label_en": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

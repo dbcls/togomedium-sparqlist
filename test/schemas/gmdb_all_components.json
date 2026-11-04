@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_all_components",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "gmo_id",
+      "name"
+    ],
+    "properties": {
+      "gmo_id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      }
+    }
+  }
+}

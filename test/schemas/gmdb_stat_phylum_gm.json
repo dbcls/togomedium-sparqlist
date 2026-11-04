@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_stat_phylum_gm",
+  "type": "object",
+  "required": [
+    "contents",
+    "columns",
+    "total",
+    "limit",
+    "offset"
+  ],
+  "properties": {
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "phylum",
+          "gms"
+        ],
+        "properties": {
+          "phylum": {
+            "type": "object",
+            "required": [
+              "label",
+              "href"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string"
+              }
+            }
+          },
+          "gms": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "label"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "total": {
+      "type": "integer"
+    },
+    "limit": {
+      "type": "string"
+    },
+    "offset": {
+      "type": "string"
+    }
+  }
+}

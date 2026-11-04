@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_list_components_by_keyword",
+  "type": "object",
+  "required": [
+    "contents",
+    "total",
+    "limit",
+    "offset",
+    "columns"
+  ],
+  "properties": {
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "gmo_id",
+          "name"
+        ],
+        "properties": {
+          "gmo_id": {
+            "type": "object",
+            "required": [
+              "label",
+              "href"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string"
+              }
+            }
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "total": {
+      "type": "string"
+    },
+    "limit": {
+      "type": "string"
+    },
+    "offset": {
+      "type": "string"
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "label"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

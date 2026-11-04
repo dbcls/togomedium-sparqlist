@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_phenotype_by_strainid_nbrc",
+  "type": "object",
+  "required": [
+    "total",
+    "limit",
+    "offset",
+    "columns",
+    "contents"
+  ],
+  "properties": {
+    "total": {
+      "type": "string"
+    },
+    "limit": {
+      "type": "string"
+    },
+    "offset": {
+      "type": "string"
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "label"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "property",
+          "value"
+        ],
+        "properties": {
+          "source": {
+            "type": "object",
+            "required": [
+              "label",
+              "href"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string"
+              }
+            }
+          },
+          "property": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

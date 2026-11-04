@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_media_by_gtdb_taxon",
+  "type": "object",
+  "required": [
+    "total",
+    "offset",
+    "limit",
+    "contents"
+  ],
+  "properties": {
+    "total": {
+      "type": "integer"
+    },
+    "offset": {
+      "type": "integer"
+    },
+    "limit": {
+      "type": "integer"
+    },
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "gm_id",
+          "name",
+          "original_media_id"
+        ],
+        "properties": {
+          "gm_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "original_media_id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

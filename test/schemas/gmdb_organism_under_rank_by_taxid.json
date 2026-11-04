@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gmdb_organism_under_rank_by_taxid",
+  "type": "object",
+  "required": [
+    "total",
+    "offset",
+    "contents",
+    "columns",
+    "limit"
+  ],
+  "properties": {
+    "total": {
+      "type": "integer"
+    },
+    "offset": {
+      "type": "integer"
+    },
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "rank",
+          "num_of_media",
+          "tax_id"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "string"
+          },
+          "num_of_media": {
+            "type": "string"
+          },
+          "tax_id": {
+            "type": "object",
+            "required": [
+              "label",
+              "href"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "label"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "limit": {
+      "type": "integer"
+    }
+  }
+}
